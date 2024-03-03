@@ -86,7 +86,7 @@ export default function Home() {
                   Analyze and engage with your audience effectively.
                 </h3>
                 <h4 className="text-[15px] mt-4">
-                  Monitor your audience's interaction and understand what resonates 
+                  Monitor your audience&apos;s interaction and understand what resonates 
                   with your followers. Adapt and refine your strategy in real-time 
                   to ensure their ongoing engagement.
                 </h4>
@@ -99,7 +99,7 @@ export default function Home() {
 
           <div className="py-10">
             <h3 className="text-4xl font-bold text-center">
-              Everything you need, we've (probably) got it.
+              Everything you need, we&apos;ve (probably) got it.
             </h3>
             <div className="grid grid-cols-3 mt-16">
               <div className="px-0 md:px-10 group">
