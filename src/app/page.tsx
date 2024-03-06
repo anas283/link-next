@@ -20,7 +20,7 @@ export default function Home() {
               <span>Link is now in development</span>
               <MoveRight className="w-4 h-4 ml-2" />
             </div>
-            <h1 className="text-5xl font-semibold text-center max-w-3xl mx-auto mt-8">
+            <h1 className="text-5xl font-bold text-center max-w-3xl mx-auto mt-8">
               The simple link in bio for product-focused users. Works whatever you do.
             </h1>
             <h6 className="text-[15px] text-gray-600 font-normal text-center max-w-xl mx-auto mt-8">
