@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"
 import Image from "next/image";
-import GridBg from "../../public/grid-bg.png";
+import GridBg from "../../../public/grid-bg.png";
 import { MousePointerSquareDashed, MoveRight, Share, Sparkles, SquareStack } from "lucide-react";
 
 export default function Home() {

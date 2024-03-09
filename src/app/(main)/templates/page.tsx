@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Template1 from "../../../public/template-1.png";
-import Template2 from "../../../public/template-2.png";
+import Template1 from "../../../../public/template-1.png";
+import Template2 from "../../../../public/template-2.png";
 
 export default function Templates() {
   return (
