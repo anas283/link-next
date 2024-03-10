@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import GridBg from "../../../public/grid-bg.png";
 import { MousePointerSquareDashed, MoveRight, Share, Sparkles, SquareStack } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -27,7 +28,9 @@ export default function Home() {
               Instagram, TikTok, Twitter, YouTube, and various social platforms.
             </h6>
             <div className="flex justify-center gap-3 mt-8">
-              <Button>Try for free now</Button>
+              <Link href="register">
+                <Button>Try for free now</Button>
+              </Link>
             </div>
 
             <div className="flex justify-center mt-20">
