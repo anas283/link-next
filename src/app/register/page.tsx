@@ -9,7 +9,7 @@ import { Check, Loader2, MoveLeft, X } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { database } from "../../firebase/config";
 import { collection, addDoc, getDocs } from "firebase/firestore";
-import { getAuth ,createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 type RegisterInputs = {
   email: string,
@@ -27,6 +27,9 @@ export default function Register() {
   const [username, setUsername] = useState('');
 
   const dbInstance = collection(database, 'user-links');
+  const auth = getAuth();
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
 
   const onSearch = (e: any) => {
     setLoading(true);
@@ -67,13 +70,23 @@ export default function Register() {
   }
 
   const signUpNewUser = async (user: RegisterInputs) => {
-    const auth = getAuth();
     createUserWithEmailAndPassword(auth, user.email, user.password)
       .then((userCredential) => {
         const user = userCredential.user;
         registerUsername(user.email);
       })
       .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  const signUpWithGoogle = (event: any) => {
+    event.preventDefault();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const user = result.user;
+        registerUsername(user.email);
+      }).catch((error) => {
         console.log(error);
       });
   }
@@ -129,7 +142,7 @@ export default function Register() {
                     </Button>
                   </div>
                 :
-                  <Button>Sign up with Google</Button>
+                  <Button onClick={(e) => signUpWithGoogle(e)}>Sign up with Google</Button>
                 }
               </div>
             </form>
