@@ -28,7 +28,9 @@ export default function Navbar() {
               Changelog
             </Link>
           </div>
-          <Button>Log in</Button>
+          <Link href="login">
+            <Button>Log in</Button>
+          </Link>
         </div>
       </div>
     </div>

@@ -2,11 +2,47 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+
+import {
+  CreditCard,
+  LifeBuoy,
+  LogOut,
+  Settings,
+  User,
+} from "lucide-react"
+ 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { collection } from "firebase/firestore";
+import { database } from "@/firebase/config";
+import { getAuth, signOut } from "firebase/auth";
 
 export default function Navbar() {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href;
+  const router = useRouter();
+
+  const dbInstance = collection(database, 'user-links');
+  const auth = getAuth();
+
+  const logout = () => {
+    signOut(auth).then(() => {
+      console.log('logout success');
+      localStorage.removeItem('token');
+      router.push('/');
+    }).catch((error) => {
+      console.log(error);
+    })
+  }
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 border-b">
@@ -32,9 +68,44 @@ export default function Navbar() {
         <div className="flex md:order-2 space-x-3 md:space-x-3 rtl:space-x-reverse">
           <Button variant="secondary">Try Pro for free</Button>
           <Button variant="outline">Share</Button>
-          <div className="w-10 h-10 rounded-full bg-gray-400 overflow-hidden">
-            <img src="https://placehold.co/50" alt="profile-pic" />
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-10 h-10 rounded-full overflow-hidden p-0">
+                <img src="https://placehold.co/50" alt="profile-pic" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  <span>Billing</span>
+                  <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                  <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <LifeBuoy className="mr-2 h-4 w-4" />
+                <span>Support</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout()}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <button data-collapse-toggle="navbar-cta" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-cta" aria-expanded="false">
             <span className="sr-only">Open main menu</span>
             <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
