@@ -2,14 +2,21 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-// import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import { Check, Loader2, MoveLeft, X } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { database } from "../../firebase/config";
 import { collection, addDoc, getDocs } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, fetchSignInMethodsForEmail, signInWithCredential } from "firebase/auth";
+import { AlertCircle } from "lucide-react"
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
+import firebase from "firebase/compat/app";
 
 type RegisterInputs = {
   email: string,
@@ -19,12 +26,13 @@ type RegisterInputs = {
 export default function Register() {
   const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterInputs>();
   const [isClaimed, setIsClaimed] = useState(false);
-  // const router = useRouter();
+  const router = useRouter();
 
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [available, setAvailable] = useState(false);
   const [username, setUsername] = useState('');
+  const [error, setError] = useState('');
 
   const dbInstance = collection(database, 'user-links');
   const auth = getAuth();
@@ -71,21 +79,32 @@ export default function Register() {
 
   const signUpNewUser = async (user: RegisterInputs) => {
     createUserWithEmailAndPassword(auth, user.email, user.password)
-      .then((userCredential) => {
+      .then((userCredential: any) => {
         const user = userCredential.user;
+        localStorage.setItem('token', user.accessToken);
+        router.push('/dashboard');
         registerUsername(user.email);
       })
       .catch((error) => {
-        console.log(error);
+        setError(error.code);
+        setLoading(false);
       });
   }
+
+  const checkIfEmailExist = (email: string) => {
+    // TODO: add email validation for google auth
+  };
 
   const signUpWithGoogle = (event: any) => {
     event.preventDefault();
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then((result: any) => {
         const user = result.user;
+        console.log(user);
+        localStorage.setItem('token', user.accessToken);
+        router.push('/dashboard');
         registerUsername(user.email);
+        // checkIfEmailExist(user.email!)
       }).catch((error) => {
         console.log(error);
       });
@@ -117,6 +136,17 @@ export default function Register() {
               </Button>
               <h6 className="text-gray-500 mt-3">link.me/{username} is yours!</h6>
               <h1 className="text-3xl font-bold">Now, create your account.</h1>
+
+              {error &&
+                <Alert variant="destructive" className="mt-3">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>
+                    This email is already in use
+                  </AlertDescription>
+                </Alert>
+              }
+
               <div>
                 <Input type="email" placeholder="Email" className="mt-5"
                   {...register("email")}

@@ -9,6 +9,12 @@ import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopu
 import { useRouter } from "next/navigation";
 import { database } from "../../firebase/config";
 import { collection } from "firebase/firestore";
+import { AlertCircle } from "lucide-react"
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
 
 type LoginInputs = {
   email: string,
@@ -18,6 +24,7 @@ type LoginInputs = {
 export default function Login() {
   const { register, handleSubmit, watch, formState: { errors } } = useForm<LoginInputs>();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const dbInstance = collection(database, 'user-links');
@@ -30,6 +37,7 @@ export default function Login() {
   }
 
   const signIn = async (user: LoginInputs) => {
+    setError('');
     signInWithEmailAndPassword(auth, user.email, user.password)
       .then((userCredential: any) => {
         const user = userCredential.user;
@@ -38,7 +46,8 @@ export default function Login() {
         router.push('/dashboard');
       })
       .catch((error) => {
-        console.log(error);
+        setError(error.code);
+        setLoading(false);
       });
   }
 
@@ -66,6 +75,17 @@ export default function Login() {
           <form onSubmit={handleSubmit(onSubmit)} className="w-full">
             <h1 className="text-3xl font-bold">Log in to your Link</h1>
             <h6 className="text-gray-500 mt-3">Welcome back!</h6>
+
+            {error &&
+              <Alert variant="destructive" className="mt-3">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                  Invalid login credentials
+                </AlertDescription>
+              </Alert>
+            }
+
             <div>
               <Input type="email" placeholder="Email" className="mt-5"
                 {...register("email")}
