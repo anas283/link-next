@@ -91,8 +91,21 @@ export default function Register() {
       });
   }
 
-  const checkIfEmailExist = (email: string) => {
-    // TODO: add email validation for google auth
+  const checkIfEmailExist = async (user: any) => {
+    const userLinks = await getUsernames();
+
+    let isUsernameExist = userLinks.find((data) => {
+      return data.email === user.email
+    })
+
+    if (isUsernameExist) {
+      setError('This email is already in use');
+    }
+    else {
+      localStorage.setItem('token', user.accessToken);
+      router.push('/dashboard');
+      registerUsername(user.email);
+    }
   };
 
   const signUpWithGoogle = (event: any) => {
@@ -101,10 +114,7 @@ export default function Register() {
       .then((result: any) => {
         const user = result.user;
         console.log(user);
-        localStorage.setItem('token', user.accessToken);
-        router.push('/dashboard');
-        registerUsername(user.email);
-        // checkIfEmailExist(user.email!)
+        checkIfEmailExist(user);
       }).catch((error) => {
         console.log(error);
       });
