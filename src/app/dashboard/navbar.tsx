@@ -25,6 +25,10 @@ import {
 import { collection } from "firebase/firestore";
 import { database } from "@/firebase/config";
 import { getAuth, signOut } from "firebase/auth";
+import { useAppSelector } from "@/lib/hooks";
+import { useEffect } from "react";
+import Image from "next/image";
+import { deleteCookie } from "cookies-next";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -34,10 +38,17 @@ export default function Navbar() {
   const dbInstance = collection(database, 'user-links');
   const auth = getAuth();
 
+  const userDetails: any = useAppSelector(state => state.userDetails);
+
+  useEffect(() => {
+    console.log('userDetails:');
+    console.log(userDetails);
+  },[])
+
   const logout = () => {
     signOut(auth).then(() => {
-      console.log('logout success');
-      localStorage.removeItem('token');
+      localStorage.removeItem('persist:state');
+      deleteCookie('token');
       router.push('/');
     }).catch((error) => {
       console.log(error);
@@ -71,7 +82,7 @@ export default function Navbar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="w-10 h-10 rounded-full overflow-hidden p-0">
-                <img src="https://placehold.co/50" alt="profile-pic" />
+                <img src={userDetails?.photoURL ? userDetails?.photoURL:'https://placehold.co/50'} alt="profile-pic" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">

@@ -15,6 +15,9 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert"
+import { useAppDispatch, useAppSelector, useAppStore } from "@/lib/hooks";
+import { setUserDetails } from "@/lib/store/authSlice";
+import { setCookie } from "cookies-next";
 
 type LoginInputs = {
   email: string,
@@ -32,6 +35,8 @@ export default function Login() {
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({ prompt: "select_account" });
 
+  const dispatch = useAppDispatch()
+
   const onSubmit: SubmitHandler<LoginInputs> = data => {
     signIn(data);
   }
@@ -42,7 +47,7 @@ export default function Login() {
       .then((userCredential: any) => {
         const user = userCredential.user;
         console.log(user);
-        localStorage.setItem('token', user.accessToken);
+        setCookie("token", user.accessToken);
         router.push('/dashboard');
       })
       .catch((error) => {
@@ -60,7 +65,8 @@ export default function Login() {
       .then((result: any) => {
         const user = result.user;
         console.log(user);
-        localStorage.setItem('token', user.accessToken);
+        setCookie("token", user.accessToken);
+        // dispatch(setUserDetails(user));
         router.push('/dashboard');
       }).catch((error) => {
         console.log(error);
