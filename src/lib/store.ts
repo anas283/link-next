@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { authReducer } from "./store/authSlice";
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
+import { linkReducer } from "./store/linkSlice";
 
 const persistConfig = {
   key: 'state',
@@ -11,7 +12,10 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, authReducer)
 
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: {
+    auth: persistedReducer,
+    link: linkReducer
+  },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({ serializableCheck: false })
 })

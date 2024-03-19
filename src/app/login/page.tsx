@@ -66,7 +66,7 @@ export default function Login() {
         const user = result.user;
         console.log(user);
         setCookie("token", user.accessToken);
-        // dispatch(setUserDetails(user));
+        dispatch(setUserDetails(user));
         router.push('/dashboard');
       }).catch((error) => {
         console.log(error);

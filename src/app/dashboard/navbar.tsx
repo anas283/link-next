@@ -38,13 +38,8 @@ export default function Navbar() {
   const dbInstance = collection(database, 'user-links');
   const auth = getAuth();
 
-  const userDetails: any = useAppSelector(state => state.userDetails);
-
-  useEffect(() => {
-    console.log('userDetails:');
-    console.log(userDetails);
-  },[])
-
+  const userDetails: any = useAppSelector(state => state.auth.userDetails);
+  
   const logout = () => {
     signOut(auth).then(() => {
       localStorage.removeItem('persist:state');
