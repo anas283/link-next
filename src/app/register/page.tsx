@@ -7,16 +7,14 @@ import { useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import { Check, Loader2, MoveLeft, X } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { database } from "../../firebase/config";
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, fetchSignInMethodsForEmail, signInWithCredential } from "firebase/auth";
 import { AlertCircle } from "lucide-react"
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert"
-import firebase from "firebase/compat/app";
+import supabase from "@/utils/supabase";
+import { setCookie } from "cookies-next";
 
 type RegisterInputs = {
   email: string,
@@ -34,10 +32,31 @@ export default function Register() {
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
 
-  const dbInstance = collection(database, 'user-links');
-  const auth = getAuth();
-  const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: "select_account" });
+  useEffect(() => {
+    setTimeout(() => {
+      const googleUserData: any = localStorage.getItem('sb-mxjxkkgypfoucyqihuol-auth-token');
+      if (googleUserData) {
+        const user = JSON.parse(googleUserData).user;
+        setCookie("token", JSON.parse(googleUserData).access_token);
+        if (user.email) checkIfEmailRegistered(user.email);
+      }
+    }, 200);
+  },[])
+
+  const checkIfEmailRegistered = async (email: string) => {
+    setIsClaimed(true);
+
+    const users = (await supabase.from('users').select()).data;
+    let isEmailExist = users?.find((data) => { 
+      return data['email'] === email
+    });
+
+    if (isEmailExist) {
+      setError('This email is already registered!');
+    } else {
+      registerUsername(email);
+    }
+  }
 
   const onSearch = (e: any) => {
     setLoading(true);
@@ -45,28 +64,20 @@ export default function Register() {
     debouncedHandleSearch(e.target.value)
   }
 
-  const getUsernames = async () => {
-    return getDocs(dbInstance)
-      .then((data) => {
-        return data.docs.map((item) => {
-          return { ...item.data() }
-        });
-      })
-  }
-
   const handleSearch = async (username: string) => {
-    setUsername(username);
-    const userLinks = await getUsernames();
+    const users = (await supabase.from('users').select()).data;
 
-    let isUsernameExist = userLinks.find((data) => {
-      return data.username === username
+    let isUsernameExist = users?.find((data) => { 
+      return data['username'] === username
     })
 
     if (isUsernameExist) {
       setAvailable(false);
     } else {
       setAvailable(true);
+      localStorage.setItem('search-username', username);
     }
+
     setLoading(false);
   }
 
@@ -78,60 +89,46 @@ export default function Register() {
   }
 
   const signUpNewUser = async (user: RegisterInputs) => {
-    createUserWithEmailAndPassword(auth, user.email, user.password)
-      .then((userCredential: any) => {
-        const user = userCredential.user;
-        localStorage.setItem('token', user.accessToken);
-        router.push('/dashboard');
-        registerUsername(user.email);
-      })
-      .catch((error) => {
-        setError(error.code);
-        setLoading(false);
-      });
-  }
-
-  const checkIfEmailExist = async (user: any) => {
-    const userLinks = await getUsernames();
-
-    let isUsernameExist = userLinks.find((data) => {
-      return data.email === user.email
+    const { data, error } = await supabase.auth.signUp({
+      email: user.email,
+      password: user.password,
     })
 
-    if (isUsernameExist) {
-      setError('This email is already in use');
-    }
-    else {
-      localStorage.setItem('token', user.accessToken);
-      router.push('/dashboard');
+    if (data) {
       registerUsername(user.email);
     }
-  };
-
-  const signUpWithGoogle = (event: any) => {
-    event.preventDefault();
-    signInWithPopup(auth, provider)
-      .then((result: any) => {
-        const user = result.user;
-        console.log(user);
-        checkIfEmailExist(user);
-      }).catch((error) => {
-        console.log(error);
-      });
+    if (error) {
+      setError('This email is already registered!');
+    }
   }
 
-  const registerUsername = async (email: string | null) => {
-    addDoc(dbInstance, {
-      username: username,
-      email: email
+  const registerUsername = async (email: string) => {
+    const username = localStorage.getItem('search-username') ?? search;
+
+    const { error } = await supabase
+      .from("users")
+      .insert({ username: username, email: email });
+
+    setLoading(false);
+
+    if (!error) {
+      router.push('/dashboard');
+    }
+  }
+
+  const signUpWithGoogle = async (e: any) => {
+    e.preventDefault();
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'http://localhost:3000/register',
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      }
     })
-    .then((res) => {
-      setLoading(false);
-      // router.push('/add-link');
-    })
-    .catch((error) => {
-      console.log(error);
-    });
   }
 
   return (
@@ -152,7 +149,7 @@ export default function Register() {
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>Error</AlertTitle>
                   <AlertDescription>
-                    This email is already in use
+                    {error}
                   </AlertDescription>
                 </Alert>
               }
@@ -182,7 +179,9 @@ export default function Register() {
                     </Button>
                   </div>
                 :
-                  <Button onClick={(e) => signUpWithGoogle(e)}>Sign up with Google</Button>
+                  <Button onClick={(e) => signUpWithGoogle(e)}>
+                    Sign up with Google
+                  </Button>
                 }
               </div>
             </form>
