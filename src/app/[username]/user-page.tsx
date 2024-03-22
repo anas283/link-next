@@ -13,7 +13,7 @@ export default function UserPage(data: UserDetails) {
   const [links, setLinks] = useState([]);
 
   useEffect(() => {
-    if (data) {
+    if (data && data.links) {
       const links = data.links || '';
       setLinks(JSON.parse(links));
       console.log(JSON.parse(links));
