@@ -43,6 +43,7 @@ export default function Navbar() {
   const logout = () => {
     signOut(auth).then(() => {
       localStorage.removeItem('persist:state');
+      localStorage.removeItem('sb-mxjxkkgypfoucyqihuol-auth-token');
       deleteCookie('token');
       router.push('/');
     }).catch((error) => {

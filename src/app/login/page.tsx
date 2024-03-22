@@ -3,21 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { database } from "../../firebase/config";
-import { collection } from "firebase/firestore";
 import { AlertCircle } from "lucide-react"
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert"
-import { useAppDispatch, useAppSelector, useAppStore } from "@/lib/hooks";
-import { setUserDetails } from "@/lib/store/authSlice";
+import { useAppDispatch } from "@/lib/hooks";
 import { setCookie } from "cookies-next";
+import supabase from "@/utils/supabase";
 
 type LoginInputs = {
   email: string,
@@ -30,12 +27,31 @@ export default function Login() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  const dbInstance = collection(database, 'user-links');
-  const auth = getAuth();
-  const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: "select_account" });
-
   const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    setTimeout(() => {
+      const googleUserData: any = localStorage.getItem('sb-mxjxkkgypfoucyqihuol-auth-token');
+      if (googleUserData) {
+        const user = JSON.parse(googleUserData).user;
+        if (user.email) checkIfEmailRegistered(user.email, JSON.parse(googleUserData).access_token);
+      }
+    }, 200);
+  },[])
+
+  const checkIfEmailRegistered = async (email: string, token: string) => {
+    const users = (await supabase.from('users').select()).data;
+    let isEmailExist = users?.find((data) => { 
+      return data['email'] === email
+    });
+
+    if (isEmailExist) {
+      setCookie("token", token);
+      router.push('/dashboard');
+    } else {
+      setError('This email is not registered yet!');
+    }
+  }
 
   const onSubmit: SubmitHandler<LoginInputs> = data => {
     signIn(data);
@@ -43,34 +59,37 @@ export default function Login() {
 
   const signIn = async (user: LoginInputs) => {
     setError('');
-    signInWithEmailAndPassword(auth, user.email, user.password)
-      .then((userCredential: any) => {
-        const user = userCredential.user;
-        console.log(user);
-        setCookie("token", user.accessToken);
-        router.push('/dashboard');
-      })
-      .catch((error) => {
-        setError(error.code);
-        setLoading(false);
-      });
+    setLoading(true);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: user.password,
+    })
+
+    if (data) {
+      setCookie("token", data.session?.access_token);
+      router.push('/dashboard');
+      setLoading(false);
+    }
+    if (error) {
+      setError("Invalid login credentials");
+      setLoading(false);
+    }
   }
 
-  const signInWithGoogle = (event: any) => {
-    event.preventDefault();
-    const auth = getAuth();
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
-    signInWithPopup(auth, provider)
-      .then((result: any) => {
-        const user = result.user;
-        console.log(user);
-        setCookie("token", user.accessToken);
-        dispatch(setUserDetails(user));
-        router.push('/dashboard');
-      }).catch((error) => {
-        console.log(error);
-      });
+  const signInWithGoogle = async (e: any) => {
+    e.preventDefault();
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: 'http://localhost:3000/login',
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      }
+    })
   }
  
   return (
@@ -87,7 +106,7 @@ export default function Login() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
-                  Invalid login credentials
+                  {error}
                 </AlertDescription>
               </Alert>
             }
