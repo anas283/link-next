@@ -22,33 +22,26 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { collection } from "firebase/firestore";
-import { database } from "@/firebase/config";
-import { getAuth, signOut } from "firebase/auth";
 import { useAppSelector } from "@/lib/hooks";
-import { useEffect } from "react";
-import Image from "next/image";
 import { deleteCookie } from "cookies-next";
+import supabase from "@/utils/supabase";
+import { useEffect } from "react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href;
   const router = useRouter();
 
-  const dbInstance = collection(database, 'user-links');
-  const auth = getAuth();
-
   const userDetails: any = useAppSelector(state => state.auth.userDetails);
-  
-  const logout = () => {
-    signOut(auth).then(() => {
+
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut()
+    if (!error) {
       localStorage.removeItem('persist:state');
       localStorage.removeItem('sb-mxjxkkgypfoucyqihuol-auth-token');
       deleteCookie('token');
       router.push('/');
-    }).catch((error) => {
-      console.log(error);
-    })
+    }
   }
 
   return (

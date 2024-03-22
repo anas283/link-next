@@ -11,13 +11,13 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { database } from "@/firebase/config";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { collection, query, where, getDocs, addDoc, updateDoc, doc, setDoc } from "firebase/firestore";
 import { useForm } from "react-hook-form";
 import Preview from "./components/preview";
 import { setLinkDetails } from "@/lib/store/linkSlice";
+import supabase from "@/utils/supabase";
+import { UserDetails } from "@/interface/user-details";
 
 type LinkInputs = {
   docId: string,
@@ -32,24 +32,37 @@ export default function Dashboard() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>();
+  const [userData, setUserData] = useState<UserDetails>();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     setLoading(true);
 
-    const getUserLink = async () => {
-      const q = query(collection(database, "user-links"), where("email", "==", userDetails?.email));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        setValue('docId', doc.id);
-        setValue('username', data.username);
-        setValue('bio', data.bio);
-        saveDetails('',data.username, data.bio);
-        setLoading(false);
-      });
+    const getLinkData = async () => {
+      const userData: any = localStorage.getItem('sb-mxjxkkgypfoucyqihuol-auth-token');
+      if (userData) {
+        const user = JSON.parse(userData).user;
+        setEmail(user.email);
+
+        const { data, error } = await supabase
+          .from('users')
+          .select()
+          .eq('email', user.email)
+
+        if (data) {
+          console.log('data');
+          console.log(data[0]);
+
+          setUserData(data[0]);
+          setValue('username', data[0].username);
+          setValue('bio', data[0].bio);
+
+          setLoading(false);
+        }
+      }
     }
-    getUserLink();
+    getLinkData();
   },[])
 
   useEffect(() => {
@@ -75,17 +88,23 @@ export default function Dashboard() {
   };
 
   const handleUpload = async () => {
-    // TODO: upload image to firebase
+    // TODO: upload image to supabase
   };
 
   const publish = async () => {
     console.log(getValues());
 
-    await updateDoc(doc(database, "user-links", getValues("docId")), {
-      email: userDetails?.email,
-      username: getValues("username"),
-      bio: getValues("bio")
-    });
+    const { error } = await supabase
+      .from('users')
+      .update({
+        username: getValues("username"),
+        bio: getValues("bio")
+      })
+      .eq('email', email)
+
+    if (!error) {
+      console.log('success update for: ' + email);
+    }
   }
 
   const saveDetails = (
@@ -155,7 +174,7 @@ export default function Dashboard() {
               <div className="border-shade-5 h-8 w-8 animate-spin rounded-full border-2 border-t-black border-r-black"></div>
             </div>
           :
-            <Preview />
+            <Preview {...userData} />
           }
         </div>
       </div>
