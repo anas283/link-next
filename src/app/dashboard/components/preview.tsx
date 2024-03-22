@@ -7,10 +7,10 @@ import { useEffect } from "react";
 export default function Preview() {
   const linkDetails: any = useAppSelector(state => state.link.linkDetails);
 
-  useEffect(() => {
-    console.log('linkDetails');
-    console.log(linkDetails);
-  },[])
+  // useEffect(() => {
+  //   console.log('linkDetails');
+  //   console.log(linkDetails);
+  // },[])
 
   return (
     <div className="bg-white w-full h-full py-10 px-4">
