@@ -1,6 +1,6 @@
 export interface UserDetails {
   id?: number;
-  profileImage?: string;
+  avatar?: string;
   username?: string;
   bio?: string;
   email?: string;

@@ -54,6 +54,7 @@ export default function Dashboard() {
           console.log('data');
           console.log(data[0]);
 
+          downloadAvatar(data[0].avatar)
           setUserData(data[0]);
           setValue('username', data[0].username);
           setValue('bio', data[0].bio);
@@ -65,6 +66,21 @@ export default function Dashboard() {
     getLinkData();
   },[])
 
+  const downloadAvatar = async (avatarPath: string) => {
+    const { data, error } = await supabase
+      .storage
+      .from('link-bucket')
+      .download(avatarPath)
+
+    if (data) {
+      const objectUrl = URL.createObjectURL(data)
+      setPreview(objectUrl);
+    }
+    if (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     if (!file) {
       setPreview(undefined)
@@ -74,7 +90,6 @@ export default function Dashboard() {
     const objectUrl = URL.createObjectURL(file)
     setPreview(objectUrl);
     setValue("profileImage", objectUrl);
-    saveDetails(objectUrl);
 
     // free memory when ever this component is unmounted
     return () => URL.revokeObjectURL(objectUrl)
@@ -82,17 +97,37 @@ export default function Dashboard() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFile(e.target.files[0]);
+      setFile(e.target.files[0] ?? file);
       console.log(e.target.files[0]);
     }
   };
 
-  const handleUpload = async () => {
-    // TODO: upload image to supabase
+  const handleAvatarUpload = async () => {
+    const fileName: string = file?.name ?? '';
+    const { data, error } = await supabase
+      .storage
+      .from('link-bucket')
+      .upload('avatars/' + fileName, file!, {
+        cacheControl: '3600',
+        upsert: false
+      })
+
+    if (data) {
+      saveAvatar(data.path);
+    }
+    if (error) {
+      console.log(error);
+
+      if (error.message === "The resource already exists") {
+        saveAvatar('avatars/' + fileName);
+      }
+    }
   };
 
   const publish = async () => {
     console.log(getValues());
+
+    handleAvatarUpload();
 
     const { error } = await supabase
       .from('users')
@@ -107,22 +142,35 @@ export default function Dashboard() {
     }
   }
 
-  const saveDetails = (
-    profileImage?: string,
-    username?: string,
-    bio?: string
-  ) => {
-    const linkDetails: any = {
-      profileImage: profileImage ?? getValues("username"),
-      username: username ?? getValues("username"),
-      bio: bio ?? getValues("bio")
+  const saveAvatar = async (path: string) => {
+    const { error } = await supabase
+      .from('users')
+      .update({
+        avatar: path,
+      })
+      .eq('email', email)
+
+    if (!error) {
+      console.log('success update for: ' + email);
     }
-
-    console.log('saving...');
-    console.log(linkDetails);
-
-    dispatch(setLinkDetails(linkDetails));
   }
+
+  // const saveDetails = (
+  //   profileImage?: string,
+  //   username?: string,
+  //   bio?: string
+  // ) => {
+  //   const linkDetails: any = {
+  //     profileImage: profileImage ?? getValues("username"),
+  //     username: username ?? getValues("username"),
+  //     bio: bio ?? getValues("bio")
+  //   }
+
+  //   console.log('saving...');
+  //   console.log(linkDetails);
+
+  //   dispatch(setLinkDetails(linkDetails));
+  // }
 
   return (
     <div className="p-4 bg-gray-50 h-full flex justify-between">
