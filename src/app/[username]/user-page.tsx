@@ -16,7 +16,9 @@ export default function UserPage(data: UserDetails) {
 
   useEffect(() => {
     if (data) {
-      downloadAvatar(data.avatar!);
+      if (data.avatar) {
+        downloadAvatar(data.avatar!);
+      }
 
       if (data.links) {
         const links = data.links || '';
