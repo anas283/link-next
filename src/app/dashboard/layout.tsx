@@ -6,7 +6,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="w-screen h-screen overflow-x-hidden">
+    <div className="w-screen min-h-screen h-full overflow-x-hidden">
       <Navbar />
       {children}
     </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { Upload } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -13,11 +13,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import Preview from "./components/preview";
-import { setLinkDetails } from "@/lib/store/linkSlice";
+import { ILink, ILinkDetails, setLinkDetails } from "@/lib/store/linkSlice";
 import supabase from "@/utils/supabase";
 import { UserDetails } from "@/interface/user-details";
+import { connect } from "react-redux";
+import { publish } from "./publish";
 
 type LinkInputs = {
   docId: string,
@@ -27,8 +29,7 @@ type LinkInputs = {
 }
 
 export default function Dashboard() {
-  const { register, setValue, getValues } = useForm<LinkInputs>();
-  const userDetails: any = useAppSelector(state => state.auth.userDetails);
+  const { register, setValue, getValues, control, handleSubmit } = useForm();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -36,13 +37,21 @@ export default function Dashboard() {
   const [userData, setUserData] = useState<UserDetails>();
   const dispatch = useAppDispatch();
 
+  const userDetails: any = useAppSelector(state => state.auth.userDetails);
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "links"
+  });
+
   useEffect(() => {
     setLoading(true);
 
+    const userData: any = localStorage.getItem('sb-mxjxkkgypfoucyqihuol-auth-token');
+    const user = JSON.parse(userData).user;
+
     const getLinkData = async () => {
-      const userData: any = localStorage.getItem('sb-mxjxkkgypfoucyqihuol-auth-token');
       if (userData) {
-        const user = JSON.parse(userData).user;
         setEmail(user.email);
 
         const { data, error } = await supabase
@@ -51,19 +60,36 @@ export default function Dashboard() {
           .eq('email', user.email)
 
         if (data) {
-          console.log('data');
-          console.log(data[0]);
+          // console.log('data');
+          // console.log(data[0]);
 
           downloadAvatar(data[0].avatar)
           setUserData(data[0]);
           setValue('username', data[0].username);
           setValue('bio', data[0].bio);
-
+          // append({ title: '', url: '' });
           setLoading(false);
+
+          getUserLinks(data[0].id)
         }
       }
     }
     getLinkData();
+
+    const getUserLinks = async (id: number) => {
+      if (id) {
+        const { data, error } = await supabase
+        .from('links')
+        .select()
+        .eq('uid', id)
+
+        if (data) {
+          data.map((link) => {
+            append({ title: link.title, url: link.url })
+          })
+        }
+      }
+    }
   },[])
 
   const downloadAvatar = async (avatarPath: string) => {
@@ -104,42 +130,45 @@ export default function Dashboard() {
 
   const handleAvatarUpload = async () => {
     const fileName: string = file?.name ?? '';
-    const { data, error } = await supabase
-      .storage
-      .from('link-bucket')
-      .upload('avatars/' + fileName, file!, {
-        cacheControl: '3600',
-        upsert: false
-      })
-
-    if (data) {
-      saveAvatar(data.path);
-    }
-    if (error) {
-      console.log(error);
-
-      if (error.message === "The resource already exists") {
-        saveAvatar('avatars/' + fileName);
+    if (fileName) {
+      const { data, error } = await supabase
+        .storage
+        .from('link-bucket')
+        .upload('avatars/' + fileName, file!, {
+          cacheControl: '3600',
+          upsert: false
+        })
+  
+      if (data) {
+        saveAvatar(data.path);
+      }
+      if (error) {
+        console.log(error);
+  
+        if (error.message === "The resource already exists") {
+          saveAvatar('avatars/' + fileName);
+        }
       }
     }
   };
 
   const publish = async () => {
-    console.log(getValues());
+    // console.log(getValues());
 
     handleAvatarUpload();
+    saveLinks();
 
-    const { error } = await supabase
-      .from('users')
-      .update({
-        username: getValues("username"),
-        bio: getValues("bio")
-      })
-      .eq('email', email)
+    // const { error } = await supabase
+    //   .from('users')
+    //   .update({
+    //     username: getValues("username"),
+    //     bio: getValues("bio")
+    //   })
+    //   .eq('email', email)
 
-    if (!error) {
-      console.log('success update for: ' + email);
-    }
+    // if (!error) {
+    //   console.log('success update for: ' + email);
+    // }
   }
 
   const saveAvatar = async (path: string) => {
@@ -151,8 +180,64 @@ export default function Dashboard() {
       .eq('email', email)
 
     if (!error) {
-      console.log('success update for: ' + email);
+      console.log('success update avatar for: ' + email);
     }
+  }
+
+  const checkIfLinkExist = async (id: number) => {
+    const { data, error } = await supabase
+      .from('links')
+      .select('*')
+      .eq('uid', id)
+
+    let linksData = [...getValues("links")];
+    linksData.forEach((link) => {
+      link.uid = id
+    })
+    
+    console.log('isLinkExist: ');
+    console.log(data);
+
+    console.log('linksData: ');
+    console.log(linksData);
+
+    // TODO: check if links exist
+  }
+
+  const saveLinks = async () => {
+    const uid = userData?.id;
+
+    const isLinkExist = checkIfLinkExist(uid!);
+
+    // if (!isLinkExist) {
+    //   const { error } = await supabase
+    //     .from('links')
+    //     .insert(
+    //       getValues("links")
+    //     )
+    //     .eq('uid', uid)
+
+    //   if (!error) {
+    //     console.log('success insert link for: ' + uid);
+    //   }
+    //   else {
+    //     console.log(error);
+    //   }
+    // } else {
+
+    // }
+  }
+
+  const addLinkURL = () => {
+    console.log(fields);
+    append({ title: '', url: '' });
+  }
+
+  const onSubmit: SubmitHandler<any> = data => {
+    console.log(data);
+    
+    // dispatch(setLinkDetails(getValues() as any));
+    // publish(data);
   }
 
   // const saveDetails = (
@@ -210,6 +295,47 @@ export default function Dashboard() {
               </div>
             </form>
           </CardContent>
+
+          <CardHeader className="py-3">
+            <CardTitle className="text-lg">Links</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <ul className="flex flex-col gap-4">
+                {fields.map((item, index) => (
+                  <li key={item.id} className={index > 0 ? 'border-t pt-4':''}>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col space-y-1.5">
+                        <Label htmlFor="title">Title</Label>
+                        <Input id="title"
+                          {...register(`links.${index}.title`)}
+                        />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
+                        <Label htmlFor="url">URL</Label>
+                        <Input id="url"
+                          {...register(`links.${index}.url`)}
+                        />
+                      </div>
+                      {/* <Button type="submit">Add</Button> */}
+                    </div>
+                    {/* <Button type="button" onClick={() => remove(index)} className="mt-2">
+                      Delete
+                    </Button> */}
+                  </li>
+                ))}
+              </ul>
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-4 w-full"
+                onClick={() => append({ title: '', url: '' })}
+              >
+                <Plus className="w-4 h-4 mr-1" /> Add more link
+              </Button>
+            </form>
+          </CardContent>
+
           <CardFooter className="flex justify-end">
             <Button onClick={() => publish()}>Publish</Button>
           </CardFooter>

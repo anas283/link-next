@@ -5,14 +5,20 @@ export interface ILinkState {
   linkDetails: ILinkDetails[]
 }
 
+export interface ILink {
+  title: string,
+  url: string
+}
+
 export interface ILinkDetails {
   profileImage: string,
   username: string,
-  bio: string
+  bio: string,
+  links: ILink[]
 }
 
 const initialState: ILinkState = {
-  linkDetails: []
+  linkDetails: [],
 };
 
 export const linkSlice = createSlice({

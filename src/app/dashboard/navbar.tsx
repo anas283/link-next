@@ -22,17 +22,20 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { deleteCookie } from "cookies-next";
 import supabase from "@/utils/supabase";
 import { useEffect } from "react";
+import { publish } from "./publish";
 
 export default function Navbar() {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href;
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const userDetails: any = useAppSelector(state => state.auth.userDetails);
+  const linkDetails: any = useAppSelector(state => state.link.linkDetails);
 
   const logout = async () => {
     const { error } = await supabase.auth.signOut()
@@ -66,8 +69,8 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex md:order-2 space-x-3 md:space-x-3 rtl:space-x-reverse">
-          <Button variant="secondary">Try Pro for free</Button>
           <Button variant="outline">Share</Button>
+          <Button onClick={() => publish(linkDetails)}>Publish</Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="w-10 h-10 rounded-full overflow-hidden p-0">

@@ -1,17 +1,11 @@
 import { UserDetails } from "@/interface/user-details";
+import { ILink } from "@/lib/store/linkSlice";
 import supabase from "@/utils/supabase";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-interface Links {
-  image: string;
-  link: string;
-  social: string;
-  username: string;
-}
-
 export default function Preview(data: UserDetails) {
-  const [links, setLinks] = useState([]);
+  const [links, setLinks] = useState<ILink[]>();
   const [avatar, setAvatar] = useState<string>();
 
   useEffect(() => {
@@ -19,12 +13,7 @@ export default function Preview(data: UserDetails) {
       if (data.avatar) {
         downloadAvatar(data.avatar!);
       }
-
-      if (data.links) {
-        const links = data.links || '';
-        setLinks(JSON.parse(links));
-        console.log(JSON.parse(links));
-      }
+      getUserLinks(data.id!)
     }
   },[])
 
@@ -43,26 +32,41 @@ export default function Preview(data: UserDetails) {
     }
   }
 
+  const getUserLinks = async (id: number) => {
+    if (id) {
+      const { data, error } = await supabase
+      .from('links')
+      .select()
+      .eq('uid', id)
+
+      if (data) {
+        setLinks(data);
+      }
+    }
+  }
+
   return (
-    <div className="bg-white w-full md:max-w-[400px] h-screen py-10 px-4 border mx-auto">
+    <div className="bg-white w-full md:max-w-[400px] h-screen py-10 px-4 mx-auto">
       <img 
-        className="w-16 h-16 mx-auto bg-gray-50 rounded-full flex justify-center items-center overflow-hidden"
+        className="w-20 h-20 mx-auto bg-gray-50 rounded-full flex justify-center items-center overflow-hidden"
         src={avatar ? avatar:'https://placehold.co/50'} 
         alt="uploaded-image"
       />
-      <h6 className="text-sm md:text-normal text-center mt-2">@{data.username}</h6>
-      <h6 className="text-xs md:text-sm text-center">{data.bio}</h6>
+      <h6 className="text-sm text-center font-medium mt-2">@{data.username}</h6>
+      <h6 className="text-xs text-center">{data.bio}</h6>
 
-      <div className="mt-5 flex flex-col gap-4">
-        {links.map(function(data: Links) {
+      <div className="my-6 flex flex-col gap-3">
+        {links?.map(function(data: ILink) {
           return (
             <Link 
-              key={data.link} 
-              href={data.link}
+              key={data.url} 
+              href={data.url}
               target="_blank"
-              className="bg-blue-500 rounded px-4 py-3 cursor-pointer"
+              className="bg-black rounded px-3 py-2 pointer-events-none"
             >
-              <div className="text-white">{data.username}</div>
+              <div className="text-xs text-white text-center">
+                {data.title}
+              </div>
             </Link>
           )
         })}
