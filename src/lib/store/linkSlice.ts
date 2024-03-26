@@ -6,8 +6,11 @@ export interface ILinkState {
 }
 
 export interface ILink {
+  id: number,
+  uid: number,
   title: string,
-  url: string
+  url: string,
+  mode: string
 }
 
 export interface ILinkDetails {

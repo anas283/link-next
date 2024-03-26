@@ -1,6 +1,6 @@
 "use client"
 
-import { Plus, Upload } from "lucide-react";
+import { Pencil, Plus, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -13,31 +13,32 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { Controller, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import Preview from "./components/preview";
-import { ILink, ILinkDetails, setLinkDetails } from "@/lib/store/linkSlice";
 import supabase from "@/utils/supabase";
 import { UserDetails } from "@/interface/user-details";
-import { connect } from "react-redux";
-import { publish } from "./publish";
-
-type LinkInputs = {
-  docId: string,
-  profileImage: string,
-  username: string,
-  bio: string
-}
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { ILink } from "@/lib/store/linkSlice";
+import { useToast } from "@/components/ui/use-toast"
 
 export default function Dashboard() {
-  const { register, setValue, getValues, control, handleSubmit } = useForm();
+  const { register, setValue, getValues, control, handleSubmit, watch } = useForm();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>();
   const [userData, setUserData] = useState<UserDetails>();
   const dispatch = useAppDispatch();
-
-  const userDetails: any = useAppSelector(state => state.auth.userDetails);
+  const { toast } = useToast()
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -60,14 +61,10 @@ export default function Dashboard() {
           .eq('email', user.email)
 
         if (data) {
-          // console.log('data');
-          // console.log(data[0]);
-
           downloadAvatar(data[0].avatar)
           setUserData(data[0]);
           setValue('username', data[0].username);
           setValue('bio', data[0].bio);
-          // append({ title: '', url: '' });
           setLoading(false);
 
           getUserLinks(data[0].id)
@@ -85,7 +82,13 @@ export default function Dashboard() {
 
         if (data) {
           data.map((link) => {
-            append({ title: link.title, url: link.url })
+            append({ 
+              id: link.id, 
+              uid: link.uid, 
+              title: link.title, 
+              url: link.url, 
+              mode: 'view' 
+            })
           })
         }
       }
@@ -153,22 +156,22 @@ export default function Dashboard() {
   };
 
   const publish = async () => {
-    // console.log(getValues());
-
     handleAvatarUpload();
     saveLinks();
 
-    // const { error } = await supabase
-    //   .from('users')
-    //   .update({
-    //     username: getValues("username"),
-    //     bio: getValues("bio")
-    //   })
-    //   .eq('email', email)
+    const { error } = await supabase
+      .from('users')
+      .update({
+        username: getValues("username"),
+        bio: getValues("bio")
+      })
+      .eq('email', email)
 
-    // if (!error) {
-    //   console.log('success update for: ' + email);
-    // }
+    if (!error) {
+      toast({
+        description: "Your link has been published.",
+      })
+    }
   }
 
   const saveAvatar = async (path: string) => {
@@ -184,172 +187,220 @@ export default function Dashboard() {
     }
   }
 
-  const checkIfLinkExist = async (id: number) => {
+  const getCurrentLinks = async () => {
     const { data, error } = await supabase
       .from('links')
-      .select('*')
-      .eq('uid', id)
-
-    let linksData = [...getValues("links")];
-    linksData.forEach((link) => {
-      link.uid = id
-    })
-    
-    console.log('isLinkExist: ');
-    console.log(data);
-
-    console.log('linksData: ');
-    console.log(linksData);
-
-    // TODO: check if links exist
+      .select()
+    return data;
   }
 
   const saveLinks = async () => {
-    const uid = userData?.id;
+    const currentLinks = await getCurrentLinks();
 
-    const isLinkExist = checkIfLinkExist(uid!);
+    if (currentLinks?.length === getValues('links').length) {
+      // Link changed, proceed to update
+      const { data, error } = await supabase
+        .from('links')
+        .upsert(getValues('links'), { onConflict: 'id', ignoreDuplicates: false })
+        .select()
+  
+      if (error) {
+        console.log('error upsert link');
+        console.log(error);
+      }
+    } else {
+      // Link added, proceed insert
+      const linkForm: ILink[] = getValues('links');
+      const newLink = linkForm.filter(({ id: id1 }) => !currentLinks?.some(({ id: id2 }) => id2 === id1));
 
-    // if (!isLinkExist) {
-    //   const { error } = await supabase
-    //     .from('links')
-    //     .insert(
-    //       getValues("links")
-    //     )
-    //     .eq('uid', uid)
+      console.log('inserting');
+      console.log(newLink);
 
-    //   if (!error) {
-    //     console.log('success insert link for: ' + uid);
-    //   }
-    //   else {
-    //     console.log(error);
-    //   }
-    // } else {
+      const { data, error } = await supabase
+        .from('links')
+        .insert(newLink)
 
-    // }
-  }
-
-  const addLinkURL = () => {
-    console.log(fields);
-    append({ title: '', url: '' });
+      if (error) {
+        console.log('error insert link');
+        console.log(error);
+      }
+    }
   }
 
   const onSubmit: SubmitHandler<any> = data => {
     console.log(data);
-    
-    // dispatch(setLinkDetails(getValues() as any));
-    // publish(data);
   }
 
-  // const saveDetails = (
-  //   profileImage?: string,
-  //   username?: string,
-  //   bio?: string
-  // ) => {
-  //   const linkDetails: any = {
-  //     profileImage: profileImage ?? getValues("username"),
-  //     username: username ?? getValues("username"),
-  //     bio: bio ?? getValues("bio")
-  //   }
+  const toggleLinkMode = (index: number, mode: string) => {
+    if (mode === 'view') setValue('links.' + index + '.mode', 'edit')
+    if (mode === 'edit') setValue('links.' + index + '.mode', 'view')
+  }
 
-  //   console.log('saving...');
-  //   console.log(linkDetails);
+  const deleteLink = async (index: number, id: number) => {
+    remove(index);
 
-  //   dispatch(setLinkDetails(linkDetails));
-  // }
+    const { error } = await supabase
+      .from('links')
+      .delete()
+      .eq('id', id)
+
+    console.log('delete id: ' + id);
+    console.log(error);
+
+    if (!error) {
+      toast({
+        description: "Your link has been deleted.",
+      })
+    }
+  }
 
   return (
-    <div className="p-4 bg-gray-50 h-full flex justify-between">
-      <div className="w-full md:w-1/2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Profile</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form>
-              <div className="grid w-full items-center gap-4">
-                <label htmlFor="file" className="w-28 h-28 border-2 border-dashed bg-gray-50 rounded-full flex justify-center items-center cursor-pointer overflow-hidden">
-                  {preview ? 
-                    <div>
-                      <img src={preview} alt="uploaded-image" />
-                    </div>
-                  :
-                    <div>
-                      <Upload className="w-6 h-h-6 text-gray-400 flex mx-auto" />
-                      <h6 className="text-xs text-gray-500 font-medium mt-2">Add Avatar</h6>
-                    </div>
-                  }
-                  <input id="file" type="file" onChange={handleFileChange} className="invisible z-0 absolute" />
-                </label>
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="username">Username</Label>
-                  <Input id="username"
-                    {...register('username')}
-                  />
+    <div className="p-4 bg-gray-50 h-full">
+      <div className="max-w-screen-xl mx-auto flex justify-between">
+        <div className="w-full md:w-1/2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Profile</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form>
+                <div className="grid w-full items-center gap-4">
+                  <label htmlFor="file" className="w-28 h-28 border-2 border-dashed bg-gray-50 rounded-full flex justify-center items-center cursor-pointer overflow-hidden">
+                    {preview ? 
+                      <div>
+                        <img src={preview} alt="uploaded-image" />
+                      </div>
+                    :
+                      <div>
+                        <Upload className="w-6 h-h-6 text-gray-400 flex mx-auto" />
+                        <h6 className="text-xs text-gray-500 font-medium mt-2">Add Avatar</h6>
+                      </div>
+                    }
+                    <input id="file" type="file" onChange={handleFileChange} className="invisible z-0 absolute" />
+                  </label>
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="username">Username</Label>
+                    <Input id="username"
+                      {...register('username')}
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="bio">Bio</Label>
+                    <Input id="bio" 
+                      {...register('bio')}
+                    />
+                  </div>
                 </div>
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="bio">Bio</Label>
-                  <Input id="bio" 
-                    {...register('bio')}
-                  />
-                </div>
+              </form>
+            </CardContent>
+
+            <CardHeader className="py-3">
+              <CardTitle className="text-lg">Links</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <ul className="flex flex-col gap-4">
+                  {fields.map((item, index) => (
+                    <div key={item.id}>
+                      {watch('links')[index].mode === 'view' ?
+                        <Card className="p-4 flex justify-between">
+                          <div>
+                            <h6 className="text-sm font-medium">{getValues('links')[index].title}</h6>
+                            <h6 className="text-sm text-gray-500">{getValues('links')[index].url}</h6>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button className="w-8 h-8 p-0" variant="outline"
+                              onClick={() => toggleLinkMode(index, watch('links')[index].mode)}
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button className="w-8 h-8 p-0" variant="outline">
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="sm:max-w-md">
+                                <DialogHeader>
+                                  <DialogTitle>Delete link?</DialogTitle>
+                                  <DialogDescription>
+                                    Are you sure you want to delete this link?
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter className="justify-end">
+                                  <DialogClose asChild>
+                                    <Button type="button" variant="destructive"
+                                      onClick={() => deleteLink(index, getValues('links')[index].id)}
+                                    >
+                                      Delete
+                                    </Button>
+                                  </DialogClose>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+
+                          </div>
+                        </Card>
+                      :
+                        <li className={index > 0 ? 'border-t pt-4':''}>
+                          <div className="flex flex-col gap-4">
+                            <div className="flex flex-col space-y-1.5">
+                              <Label htmlFor="title">Title</Label>
+                              <Input id="title"
+                                {...register(`links.${index}.title`)}
+                              />
+                            </div>
+                            <div className="flex flex-col space-y-1.5">
+                              <Label htmlFor="url">URL</Label>
+                              <Input id="url"
+                                {...register(`links.${index}.url`)}
+                              />
+                            </div>
+                            <div className="flex flex-row gap-2 justify-end">
+                              <Button
+                                variant="outline"
+                                onClick={() => toggleLinkMode(index, watch('links')[index].mode)}
+                              >
+                                Cancel
+                              </Button>
+                              <Button type="submit"
+                                onClick={() => setValue('links.' + index + '.mode', 'view')}
+                              >
+                                {watch('links')[index].mode === 'edit' ? 'Save':'Add'}
+                              </Button>
+                            </div>
+                          </div>
+                        </li>
+                      }
+                    </div>
+                  ))}
+                </ul>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-4 w-full"
+                  onClick={() => append({ uid: userData?.id, title: '', url: '' })}
+                >
+                  <Plus className="w-4 h-4 mr-1" /> Add more link
+                </Button>
+              </form>
+            </CardContent>
+
+            <CardFooter className="flex justify-end">
+              <Button onClick={() => publish()}>Publish</Button>
+            </CardFooter>
+          </Card>
+        </div>
+        <div className="w-full md:w-1/2 p-4 flex justify-center">
+          <div className="bg-gray-400 rounded-3xl w-[220px] h-[450px] shadow overflow-hidden">
+            {loading ?
+              <div className="w-full h-full flex justify-center items-center">
+                <div className="border-shade-5 h-8 w-8 animate-spin rounded-full border-2 border-t-black border-r-black"></div>
               </div>
-            </form>
-          </CardContent>
-
-          <CardHeader className="py-3">
-            <CardTitle className="text-lg">Links</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <ul className="flex flex-col gap-4">
-                {fields.map((item, index) => (
-                  <li key={item.id} className={index > 0 ? 'border-t pt-4':''}>
-                    <div className="flex flex-col gap-4">
-                      <div className="flex flex-col space-y-1.5">
-                        <Label htmlFor="title">Title</Label>
-                        <Input id="title"
-                          {...register(`links.${index}.title`)}
-                        />
-                      </div>
-                      <div className="flex flex-col space-y-1.5">
-                        <Label htmlFor="url">URL</Label>
-                        <Input id="url"
-                          {...register(`links.${index}.url`)}
-                        />
-                      </div>
-                      {/* <Button type="submit">Add</Button> */}
-                    </div>
-                    {/* <Button type="button" onClick={() => remove(index)} className="mt-2">
-                      Delete
-                    </Button> */}
-                  </li>
-                ))}
-              </ul>
-              <Button
-                type="button"
-                variant="outline"
-                className="mt-4 w-full"
-                onClick={() => append({ title: '', url: '' })}
-              >
-                <Plus className="w-4 h-4 mr-1" /> Add more link
-              </Button>
-            </form>
-          </CardContent>
-
-          <CardFooter className="flex justify-end">
-            <Button onClick={() => publish()}>Publish</Button>
-          </CardFooter>
-        </Card>
-      </div>
-      <div className="w-full md:w-1/2 p-4 flex justify-center">
-        <div className="bg-gray-400 rounded-3xl w-[220px] h-[450px] shadow overflow-hidden">
-          {loading ?
-            <div className="w-full h-full flex justify-center items-center">
-              <div className="border-shade-5 h-8 w-8 animate-spin rounded-full border-2 border-t-black border-r-black"></div>
-            </div>
-          :
-            <Preview {...userData} />
-          }
+            :
+              <Preview {...userData} />
+            }
+          </div>
         </div>
       </div>
     </div>
