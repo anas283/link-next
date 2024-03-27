@@ -27,7 +27,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { ILink } from "@/lib/store/linkSlice";
+import { ILink, setLinkDetails, setTheme } from "@/lib/store/linkSlice";
 import { useToast } from "@/components/ui/use-toast"
 
 export default function Dashboard() {
@@ -66,8 +66,9 @@ export default function Dashboard() {
           setValue('username', data[0].username);
           setValue('bio', data[0].bio);
           setLoading(false);
-
+          dispatch(setLinkDetails(data[0]));
           getUserLinks(data[0].id)
+          getAppearance(data[0].id)
         }
       }
     }
@@ -94,6 +95,19 @@ export default function Dashboard() {
       }
     }
   },[])
+
+  const getAppearance = async (id: number) => {
+    if (id) {
+      const { data, error } = await supabase
+      .from('appearance')
+      .select()
+      .eq('uid', id)
+
+      if (data) {
+        dispatch(setTheme({ themeClass: data[0].theme_class }))
+      }
+    }
+  }
 
   const downloadAvatar = async (avatarPath: string) => {
     const { data, error } = await supabase
@@ -392,7 +406,7 @@ export default function Dashboard() {
           </Card>
         </div>
         <div className="w-full md:w-1/2 p-4 flex justify-center">
-          <div className="bg-gray-400 rounded-3xl w-[220px] h-[450px] shadow overflow-hidden">
+          <div className="bg-gray-400 rounded-3xl w-[220px] h-[450px] shadow overflow-hidden border-4 border-black">
             {loading ?
               <div className="w-full h-full flex justify-center items-center">
                 <div className="border-shade-5 h-8 w-8 animate-spin rounded-full border-2 border-t-black border-r-black"></div>

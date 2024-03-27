@@ -105,13 +105,25 @@ export default function Register() {
   const registerUsername = async (email: string) => {
     const username = localStorage.getItem('search-username') ?? search;
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("users")
-      .insert({ username: username, email: email });
+      .insert({ username: username, email: email })
+      .select()
 
     setLoading(false);
 
-    if (!error) {
+    if (data) {
+      setDefaultAppearance(data);
+    }
+  }
+
+  const setDefaultAppearance = async (userData: any) => {
+    const { data, error } = await supabase
+      .from("appearance")
+      .insert({ uid: userData.id, theme_class: 'iris-snow' })
+      .select()
+
+    if (data) {
       router.push('/dashboard');
     }
   }

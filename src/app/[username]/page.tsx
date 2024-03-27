@@ -28,8 +28,8 @@ export default function Username() {
 
     if (isUsernameExist) {
       const linksData = isUsernameExist['links'];
-      const formattedLinks = JSON.parse(linksData);
-      setLinks(formattedLinks);
+      // const formattedLinks = JSON.parse(linksData);
+      // setLinks(formattedLinks);
       setUserData(isUsernameExist);
       setIsUserExist(true);
     } else {

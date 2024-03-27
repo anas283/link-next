@@ -74,3 +74,103 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Iris Snow */
+.iris-snow {
+  background-color: white;
+}
+.iris-snow .link-button {
+  background-color: black;
+}
+.iris-snow .link-button .link-text {
+  color: white;
+}
+
+/* Iris White */
+.iris-white {
+  background-color: white;
+}
+.iris-white .link-button {
+  background-color: #b1b1b1;
+}
+.iris-white .link-button .link-text {
+  color: black;
+}
+
+/* Iris Grey */
+.iris-grey {
+  background-color: #c7c7c7;
+}
+.iris-grey .link-button {
+  background-color: white;
+}
+.iris-grey .link-button .link-text {
+  color: black;
+}
+
+/* Iris Blue */
+.iris-blue {
+  background-color: white;
+}
+.iris-blue .link-button {
+  background-color: #3446bd;
+}
+.iris-blue .link-button .link-text {
+  color: white;
+}
+
+/* Iris Purple */
+.iris-purple {
+  background-color: white;
+}
+.iris-purple .link-button {
+  background-color: #6d42aa;
+}
+.iris-purple .link-button .link-text {
+  color: white;
+}
+
+/* Iris Forest */
+.iris-forest {
+  background-color: white;
+}
+.iris-forest .link-button {
+  background-color: #24c371;
+}
+.iris-forest .link-button .link-text {
+  color: black;
+}
+
+/* Iris Dark */
+.iris-dark {
+  background-color: #2d2d2d;
+}
+.iris-dark .link-button {
+  background-color: white;
+}
+.iris-dark .link-button .link-text {
+  color: black;
+}
+.iris-dark .username {
+  color: white;
+}
+.iris-dark .bio {
+  color: white;
+}
+
+/* Iris Black */
+.iris-black {
+  background-color: black;
+}
+.iris-black .link-button {
+  background-color: #2d2d2d;
+}
+.iris-black .link-button .link-text {
+  color: white;
+}
+.iris-black .username {
+  color: white;
+}
+.iris-black .bio {
+  color: white;
+}

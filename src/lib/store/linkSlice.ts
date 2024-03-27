@@ -1,8 +1,10 @@
+import { ITheme } from "@/app/dashboard/themes/theme-list";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface ILinkState {
-  linkDetails: ILinkDetails[]
+  linkDetails: ILinkDetails[],
+  selectedTheme: ITheme
 }
 
 export interface ILink {
@@ -22,6 +24,11 @@ export interface ILinkDetails {
 
 const initialState: ILinkState = {
   linkDetails: [],
+  selectedTheme: {
+    name: '',
+    themeClass: '',
+    previewImage: ''
+  }
 };
 
 export const linkSlice = createSlice({
@@ -30,9 +37,12 @@ export const linkSlice = createSlice({
   reducers: {
     setLinkDetails: (state, action: PayloadAction<[]>) => {
       state.linkDetails = action.payload
+    },
+    setTheme: (state, action: PayloadAction<ITheme>) => {
+      state.selectedTheme = action.payload
     }
   },
 });
 
-export const { setLinkDetails } = linkSlice.actions;
+export const { setLinkDetails, setTheme } = linkSlice.actions;
 export const linkReducer = linkSlice.reducer;
