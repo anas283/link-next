@@ -406,7 +406,7 @@ export default function Dashboard() {
           </Card>
         </div>
         <div className="w-full md:w-1/2 p-4 flex justify-center">
-          <div className="bg-gray-400 rounded-3xl w-[220px] h-[450px] shadow overflow-hidden border-4 border-black">
+          <div className="bg-gray-400 rounded-3xl h-[77vh] max-h-[600px] shadow overflow-hidden border-4 border-black aspect-9/19">
             {loading ?
               <div className="w-full h-full flex justify-center items-center">
                 <div className="border-shade-5 h-8 w-8 animate-spin rounded-full border-2 border-t-black border-r-black"></div>

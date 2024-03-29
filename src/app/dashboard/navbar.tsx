@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
+import ProfilePlacholder from "../../../public/profile-placeholder.png";
 
 import {
   CreditCard,
@@ -27,6 +28,7 @@ import { deleteCookie } from "cookies-next";
 import supabase from "@/utils/supabase";
 import { useEffect } from "react";
 import { publish } from "./publish";
+import Image from "next/image";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -77,7 +79,11 @@ export default function Navbar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="w-10 h-10 rounded-full overflow-hidden p-0">
-                <img src={userDetails?.photoURL ? userDetails?.photoURL:'https://placehold.co/50'} alt="profile-pic" />
+                {userDetails?.photoURL ?
+                  <img src={userDetails?.photoURL} alt="profile-pic" />
+                :
+                  <Image src={ProfilePlacholder} alt="profile-pic" />
+                }
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
