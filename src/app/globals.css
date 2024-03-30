@@ -174,3 +174,69 @@
 .iris-black .bio {
   color: white;
 }
+
+/* Rainbow */
+.rainbow {
+  background-image: url('../../public/themes-svg/rainbow.svg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+.rainbow .link-button {
+  background-color: white;
+  border-radius: 50px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+}
+.rainbow .link-button .link-text {
+  color: black;
+}
+
+/* Flurry Blue */
+.flurry-blue {
+  background-image: url('../../public/themes-svg/flurry-blue.svg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+.flurry-blue .link-button {
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.51);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.2px);
+  -webkit-backdrop-filter: blur(10.2px);
+}
+.flurry-blue .link-button .link-text {
+  color: black;
+}
+
+/* Flurry Green */
+.flurry-green {
+  background-image: url('../../public/themes-svg/flurry-green.svg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+.flurry-green .link-button {
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.51);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.2px);
+  -webkit-backdrop-filter: blur(10.2px);
+}
+.flurry-green .link-button .link-text {
+  color: black;
+}
+
+/* Flurry Pink */
+.flurry-pink {
+  background-image: url('../../public/themes-svg/flurry-pink.svg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+.flurry-pink .link-button {
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.51);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.2px);
+  -webkit-backdrop-filter: blur(10.2px);
+}
+.flurry-pink .link-button .link-text {
+  color: black;
+}

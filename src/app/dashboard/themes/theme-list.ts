@@ -78,10 +78,10 @@ export const themes = [
     previewImage: '/themes/flurry-pink.png',
     type: 'Premium'
   },
-  {
-    name: 'Windows XP',
-    themeClass: 'windows-xp',
-    previewImage: '/themes/windows-xp.png',
-    type: 'Premium'
-  },
+  // {
+  //   name: 'Windows XP',
+  //   themeClass: 'windows-xp',
+  //   previewImage: '/themes/windows-xp.png',
+  //   type: 'Premium'
+  // },
 ]

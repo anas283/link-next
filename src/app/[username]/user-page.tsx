@@ -62,30 +62,32 @@ export default function UserPage(data: UserDetails) {
   }
 
   return (
-    <div className={`w-full md:max-w-[400px] h-screen py-10 px-4 mx-auto ${appearance?.themeClass}`}>
-      <img 
-        className="w-28 h-28 mx-auto bg-gray-50 rounded-full flex justify-center items-center overflow-hidden"
-        src={avatar ? avatar:'https://placehold.co/50'} 
-        alt="uploaded-image"
-      />
-      <h6 className="username text-lg text-center font-medium mt-2">@{data.username}</h6>
-      <h6 className="bio text-center">{data.bio}</h6>
+    <div className={`w-full h-screen ${appearance?.themeClass}`}>
+      <div className="md:max-w-[400px] py-10 px-4 mx-auto">
+        <img 
+          className="w-28 h-28 mx-auto bg-gray-50 rounded-full flex justify-center items-center overflow-hidden"
+          src={avatar ? avatar:'https://placehold.co/50'} 
+          alt="uploaded-image"
+        />
+        <h6 className="username text-lg text-center font-medium mt-2">@{data.username}</h6>
+        <h6 className="bio text-center">{data.bio}</h6>
 
-      <div className="my-8 flex flex-col gap-4">
-        {links?.map(function(data: ILink) {
-          return (
-            <Link 
-              key={data.url} 
-              href={data.url}
-              target="_blank"
-              className="link-button rounded px-4 py-3 cursor-pointer"
-            >
-              <div className="link-text text-center">
-                {data.title}
-              </div>
-            </Link>
-          )
-        })}
+        <div className="my-8 flex flex-col gap-4">
+          {links?.map(function(data: ILink) {
+            return (
+              <Link 
+                key={data.url} 
+                href={data.url}
+                target="_blank"
+                className="link-button rounded px-4 py-3 cursor-pointer"
+              >
+                <div className="link-text text-center">
+                  {data.title}
+                </div>
+              </Link>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
