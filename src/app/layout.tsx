@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import { Toaster } from "@/components/ui/toaster";
+import ComingSoon from "./coming-soon/page";
 
 const plus_jakarta_sans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
@@ -20,7 +21,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={plus_jakarta_sans.className + ' overflow-x-hidden'}>
         <StoreProvider>
-          {children}
+          {/* {children} */}
+          <ComingSoon />
         </StoreProvider>
         <Toaster />
       </body>
