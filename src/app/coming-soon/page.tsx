@@ -52,11 +52,15 @@ export default function ComingSoon() {
         priority={true}
         src={Template2Image} alt="template-1" 
         className="absolute -bottom-2 md:bottom-8 -left-16 w-28 md:w-32 lg:w-48 rotate-45 z-0"
+        width={192}
+        height={416}
       />
       <Image 
         priority={true}
         src={Template1Image} alt="template-2" 
         className="absolute -bottom-32 lg:-bottom-60 left-0 w-28 md:w-32 lg:w-48 rotate-45 z-0"
+        width={192}
+        height={416}
       />
 
       <div className="relative z-10">
