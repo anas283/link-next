@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 const plus_jakarta_sans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Link in bio",
+  title: "Linkwajo",
   description: "The simple link in bio for product-focused users",
 };
 

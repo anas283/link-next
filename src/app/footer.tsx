@@ -1,16 +1,20 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import LinkwajoLogo from "../../public/link-logo.png"; 
+import Image from "next/image";
 
 export default function Footer() {
   return (
     <div className="w-full py-10 flex items-center border-t">
       <div className="w-full max-w-6xl mx-auto flex justify-between">
         <div>
-          <div className="text-2xl font-bold">Logo</div>
+          <Link href="/" className="text-xl font-bold">
+            <Image src={LinkwajoLogo} alt="linkwojo" className="h-10 w-auto" />
+          </Link>
           <p className="mt-5">
             The simple link in bio for product-focused users
           </p>
-          <p className="text-gray-600 mt-4">
+          <p className="text-sm text-gray-500 mt-4">
             © Copyright 2024 All Rights Reserved by Link.
           </p>
         </div>
