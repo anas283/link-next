@@ -4,6 +4,7 @@ import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import { Toaster } from "@/components/ui/toaster";
 import ComingSoon from "./coming-soon/page";
+import { Analytics } from "@vercel/analytics/react"
 
 const plus_jakarta_sans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
         <StoreProvider>
           {/* {children} */}
           <ComingSoon />
+          <Analytics/>
         </StoreProvider>
         <Toaster />
       </body>
