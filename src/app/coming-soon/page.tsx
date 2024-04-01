@@ -83,10 +83,10 @@ export default function ComingSoon() {
                 placeholder="Enter your email" 
                 type="email" 
                 {...register('email', {
-                  required: "required",
+                  required: "Email is required",
                   pattern: {
                     value: /\S+@\S+\.\S+/,
-                    message: "Entered value does not match email format",
+                    message: "Please enter a valid email",
                   },
                 })} 
               />
