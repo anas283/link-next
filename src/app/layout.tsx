@@ -8,7 +8,7 @@ import ComingSoon from "./coming-soon/page";
 const plus_jakarta_sans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Linkwajo",
+  title: "Link in bio | Linkwajo",
   description: "The simple link in bio for product-focused users",
 };
 
