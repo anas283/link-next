@@ -46,19 +46,19 @@ export default function ComingSoon() {
   }
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center px-2 md:px-0 relative overflow-hidden">
+    <div className="w-screen h-screen flex justify-center items-center px-4 md:px-0 relative overflow-hidden">
 
       <Image 
         priority={true}
         src={Template2Image} alt="template-1" 
-        className="absolute -bottom-6 md:bottom-8 -left-16 w-28 md:w-32 lg:w-48 rotate-45 z-0"
+        className="absolute -bottom-20 -left-20 md:bottom-8 md:-left-16 w-28 md:w-32 lg:w-48 rotate-45 z-0"
         width={192}
         height={416}
       />
       <Image 
         priority={true}
         src={Template1Image} alt="template-2" 
-        className="absolute -bottom-36 lg:-bottom-60 left-0 w-28 md:w-32 lg:w-48 rotate-45 z-0"
+        className="absolute -bottom-32 left-14 lg:-bottom-60 md:left-0 w-28 md:w-32 lg:w-48 rotate-45 z-0"
         width={192}
         height={416}
       />
@@ -78,7 +78,7 @@ export default function ComingSoon() {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col mt-8"
           >
-            <div className="flex justify-between w-full gap-4">
+            <div className="flex flex-col lg:flex-row lg:justify-between w-full gap-4">
               <Input 
                 placeholder="Enter your email" 
                 type="email" 
@@ -100,8 +100,10 @@ export default function ComingSoon() {
           <div>
             {success &&
               <Alert className="flex flex-row gap-3 mt-5">
-                <div className="h-6 w-6 bg-green-500 rounded-full flex justify-center items-center"> 
-                  <Check className="h-4 w-4" style={{ color: 'white' }} />
+                <div>
+                  <div className="h-6 w-6 bg-green-500 rounded-full flex justify-center items-center"> 
+                    <Check className="h-4 w-4" style={{ color: 'white' }} />
+                  </div>
                 </div>
                 <div>
                   <AlertTitle>Thank you!</AlertTitle>
@@ -113,8 +115,10 @@ export default function ComingSoon() {
             }
             {error &&
               <Alert className="flex flex-row gap-3 mt-5">
-                <div className="h-6 w-6 bg-red-500 rounded-full flex justify-center items-center"> 
-                  <X className="h-4 w-4" style={{ color: 'white' }} />
+                <div>
+                  <div className="h-6 w-6 bg-red-500 rounded-full flex justify-center items-center"> 
+                    <X className="h-4 w-4" style={{ color: 'white' }} />
+                  </div>
                 </div>
                 <div>
                   <AlertTitle>We are sorry.</AlertTitle>
