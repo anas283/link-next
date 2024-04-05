@@ -28,12 +28,12 @@ export default function Navbar() {
             <Link href="blog" className="text-[15px]">
               Blog
             </Link>
-            <Link href="changelog" className="text-[15px]">
+            {/* <Link href="changelog" className="text-[15px]">
               Changelog
-            </Link>
+            </Link> */}
           </div>
           <Link href="login">
-            <Button>Log in</Button>
+            <Button className="rounded-full px-6">Log in</Button>
           </Link>
         </div>
       </div>
