@@ -1,4 +1,4 @@
-import { ITheme } from "@/app/dashboard/themes/theme-list";
+import { ITheme } from "@/app/dashboard/appearance/theme-list";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 

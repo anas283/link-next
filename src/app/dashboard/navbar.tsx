@@ -62,8 +62,8 @@ export default function Navbar() {
               <Link href="/dashboard" className={`text-sm block py-2 ${isActive('/dashboard') ? 'text-black':'text-gray-500'}`}>
                 Links
               </Link>
-              <Link href="/dashboard/themes" className={`text-sm block py-2 ${isActive('/dashboard/themes') ? 'text-black':'text-gray-500'}`}>
-                Themes
+              <Link href="/dashboard/appearance" className={`text-sm block py-2 ${isActive('/dashboard/appearance') ? 'text-black':'text-gray-500'}`}>
+                Appearance
               </Link>
               <Link href="/dashboard/analytics" className={`text-sm block py-2 ${isActive('/dashboard/analytics') ? 'text-black':'text-gray-500'}`}>
                 Analytics

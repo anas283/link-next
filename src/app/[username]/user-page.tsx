@@ -3,7 +3,7 @@ import { ILink } from "@/lib/store/linkSlice";
 import supabase from "@/utils/supabase";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ITheme } from "../dashboard/themes/theme-list";
+import { ITheme } from "../dashboard/appearance/theme-list";
 
 export default function UserPage(data: UserDetails) {
   const [links, setLinks] = useState<ILink[]>();

@@ -13,6 +13,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <Image src={GridBg} alt="grid"
         className="absolute top-0 object-fit w-full z-0"
+        priority={true}
       />
 
       <Image src={MockupLeftImage} alt="mockup-left"
