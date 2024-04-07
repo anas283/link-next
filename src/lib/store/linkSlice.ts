@@ -1,10 +1,12 @@
+import { IBackground } from "@/app/dashboard/appearance/background-list";
 import { ITheme } from "@/app/dashboard/appearance/theme-list";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface ILinkState {
   linkDetails: ILinkDetails[],
-  selectedTheme: ITheme
+  selectedTheme: ITheme,
+  selectedBackground: IBackground
 }
 
 export interface ILink {
@@ -28,6 +30,11 @@ const initialState: ILinkState = {
     name: '',
     themeClass: '',
     previewImage: ''
+  },
+  selectedBackground: {
+    name: '',
+    bgClass: '',
+    previewImage: ''
   }
 };
 
@@ -40,9 +47,12 @@ export const linkSlice = createSlice({
     },
     setTheme: (state, action: PayloadAction<ITheme>) => {
       state.selectedTheme = action.payload
+    },
+    setBackground: (state, action: PayloadAction<ITheme>) => {
+      state.selectedBackground = action.payload
     }
   },
 });
 
-export const { setLinkDetails, setTheme } = linkSlice.actions;
+export const { setLinkDetails, setTheme, setBackground } = linkSlice.actions;
 export const linkReducer = linkSlice.reducer;
