@@ -16,6 +16,7 @@ import { DialogDescription } from "@radix-ui/react-dialog";
 import SelectButtons from "./select-buttons";
 import SelectThemes from "./select-themes";
 import SelectBackgrounds from "./select-background";
+import HideLogo from "./hide-logo";
 
 export default function Themes() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -34,6 +35,7 @@ export default function Themes() {
           <SelectThemes onOpen={handleOpenDialog} />
           <SelectBackgrounds onOpen={handleOpenDialog} />
           <SelectButtons onOpen={handleOpenDialog} />
+          <HideLogo onOpen={handleOpenDialog} />
         </div>
         <div className="w-full md:w-1/2 p-4 flex justify-center">
           <div className="bg-gray-400 rounded-3xl h-[77vh] max-h-[600px] shadow overflow-hidden border-4 border-black aspect-9/19">
