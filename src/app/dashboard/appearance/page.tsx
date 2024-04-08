@@ -17,6 +17,7 @@ import SelectButtons from "./select-buttons";
 import SelectThemes from "./select-themes";
 import SelectBackgrounds from "./select-background";
 import HideLogo from "./hide-logo";
+import SelectFonts from "./select-font";
 
 export default function Themes() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,6 +36,7 @@ export default function Themes() {
           <SelectThemes onOpen={handleOpenDialog} />
           <SelectBackgrounds onOpen={handleOpenDialog} />
           <SelectButtons onOpen={handleOpenDialog} />
+          <SelectFonts onOpen={handleOpenDialog} />
           <HideLogo onOpen={handleOpenDialog} />
         </div>
         <div className="w-full md:w-1/2 p-4 flex justify-center">
