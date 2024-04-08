@@ -19,13 +19,12 @@ export default function SelectBackgrounds({ onOpen }: any) {
   const dispatch = useAppDispatch();
 
   const selectBackground = async (background: IBackground) => {
-    console.log(background);
     dispatch(setBackground(background));
   }
 
   const handleColorChange = async (color: string) => {
     if (selectedBackground.name === 'Flat Color') {
-      console.log(color);
+      setColor(color);
     }
   };
 
