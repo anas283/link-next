@@ -78,6 +78,7 @@ export default function Register() {
     } else {
       setAvailable(true);
       localStorage.setItem('search-username', username);
+      setUsername(username);
     }
 
     setLoading(false);
@@ -155,7 +156,7 @@ export default function Register() {
               <Button variant="ghost" onClick={() => setIsClaimed(!isClaimed)} className="p-0 hover:bg-transparent">
                 <MoveLeft className="h-6 w-6" />
               </Button>
-              <h6 className="text-gray-500 mt-3">link.me/{username} is yours!</h6>
+              <h6 className="text-gray-500 mt-3">linkwajo.com/{username} is yours!</h6>
               <h1 className="text-3xl font-bold">Now, create your account.</h1>
 
               {error &&
