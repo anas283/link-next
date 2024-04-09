@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { IBackground, backgrounds } from "./background-list";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { LockKeyhole } from "lucide-react";
@@ -8,31 +9,50 @@ import { Input } from "@/components/ui/input";
 import { HexColorPicker } from "react-colorful";
 import { Label } from "@/components/ui/label";
 import { useCallback, useState } from "react";
-import { setBackground } from "@/lib/store/linkSlice";
+import { setBackground, setBackgroundColor, setButtonColor, setGradientDirection, setTheme } from "@/lib/store/linkSlice";
 import { debounce } from "lodash";
 
 export default function SelectBackgrounds({ onOpen }: any) {
-  const [color, setColor] = useState("#5389be");
+  const [color, setColor] = useState("#bbbbbb");
 
   const linkDetails: any = useAppSelector(state => state.link.linkDetails);
   const selectedBackground = useAppSelector(state => state.link.selectedBackground);
+  const gradientDirection = useAppSelector(state => state.link.gradientDirection);
   const dispatch = useAppDispatch();
 
   const selectBackground = async (background: IBackground) => {
     dispatch(setBackground(background));
+    // dispatch(setBackgroundColor(color));
+    dispatch(setButtonColor("#888888"))
+    dispatch(setTheme({
+      name: '',
+      themeClass: '',
+      previewImage: ''
+    }));
+
+    if (background.name === "Flat Color") {
+      dispatch(setGradientDirection(""));
+    }
+    else if (background.name === "Gradient") {
+      dispatch(setGradientDirection("gradient-up"));
+    }
   }
 
   const handleColorChange = async (color: string) => {
-    if (selectedBackground.name === 'Flat Color') {
-      setColor(color);
-    }
+    setColor(color);
+    dispatch(setBackgroundColor(color));
   };
 
   const handleInputColor = (event: any) => {
     setColor(event.target.value);
+    dispatch(setBackgroundColor(color));
   }
 
-  const debouncedColorChange = useCallback(debounce(handleColorChange, 500), []);
+  const debouncedColorChange = useCallback(debounce(handleColorChange, 200), []);
+
+  const onGradientDirection = (event: any) => {
+    dispatch(setGradientDirection(event));
+  }
 
   return (
     <>
@@ -76,6 +96,20 @@ export default function SelectBackgrounds({ onOpen }: any) {
               )
             })}
           </div>
+          {selectedBackground.name === "Gradient" &&
+            <div className="mt-8">
+              <RadioGroup defaultValue="comfortable" onValueChange={onGradientDirection} value={gradientDirection}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="gradient-up" id="gradientUp" />
+                  <Label htmlFor="gradientUp">Gradient Up</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="gradient-down" id="gradientDown" />
+                  <Label htmlFor="gradientDown">Gradient Down</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          }
           <div className="mt-8">
             <div className="flex flex-col space-y-1.5 gap-2">
               <Label htmlFor="username">Color</Label>

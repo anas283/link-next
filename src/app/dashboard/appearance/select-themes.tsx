@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ITheme, themes } from "./theme-list"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { setTheme } from "@/lib/store/linkSlice";
+import { setBackground, setBackgroundColor, setButtonColor, setGradientDirection, setTheme } from "@/lib/store/linkSlice";
 import supabase from "@/utils/supabase";
 import Image from "next/image";
 import { LockKeyhole } from "lucide-react";
@@ -16,6 +16,13 @@ export default function SelectThemes({ onOpen }: any) {
 
     if (userTier === "Free" && theme.type === "Free") {
       dispatch(setTheme(theme));
+      dispatch(setBackground({
+        name: "",
+        previewImage: ''
+      }))
+      dispatch(setBackgroundColor(""));
+      dispatch(setButtonColor(""));
+      dispatch(setGradientDirection(""));
   
       const { error } = await supabase
         .from('appearance')

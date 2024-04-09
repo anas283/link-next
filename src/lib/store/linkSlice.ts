@@ -6,7 +6,10 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 export interface ILinkState {
   linkDetails: ILinkDetails[],
   selectedTheme: ITheme,
-  selectedBackground: IBackground
+  selectedBackground: IBackground,
+  backgroundColor: string,
+  buttonColor: string,
+  gradientDirection: string
 }
 
 export interface ILink {
@@ -35,7 +38,10 @@ const initialState: ILinkState = {
     name: '',
     bgClass: '',
     previewImage: ''
-  }
+  },
+  backgroundColor: '',
+  buttonColor: '',
+  gradientDirection: ''
 };
 
 export const linkSlice = createSlice({
@@ -50,9 +56,25 @@ export const linkSlice = createSlice({
     },
     setBackground: (state, action: PayloadAction<ITheme>) => {
       state.selectedBackground = action.payload
-    }
+    },
+    setBackgroundColor: (state, action: PayloadAction<string>) => {
+      state.backgroundColor = action.payload
+    },
+    setButtonColor: (state, action: PayloadAction<string>) => {
+      state.buttonColor = action.payload
+    },
+    setGradientDirection: (state, action: PayloadAction<string>) => {
+      state.gradientDirection = action.payload
+    },
   },
 });
 
-export const { setLinkDetails, setTheme, setBackground } = linkSlice.actions;
+export const { 
+  setLinkDetails, 
+  setTheme, 
+  setBackground,
+  setBackgroundColor,
+  setButtonColor,
+  setGradientDirection 
+} = linkSlice.actions;
 export const linkReducer = linkSlice.reducer;

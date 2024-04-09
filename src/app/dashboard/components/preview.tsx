@@ -9,6 +9,9 @@ export default function Preview(data: UserDetails) {
   const [links, setLinks] = useState<ILink[]>();
   const [avatar, setAvatar] = useState<string>();
   const selectedTheme = useAppSelector(state => state.link.selectedTheme);
+  const backgroundColor = useAppSelector(state => state.link.backgroundColor);
+  const buttonColor = useAppSelector(state => state.link.buttonColor);
+  const gradientDirection = useAppSelector(state => state.link.gradientDirection);
 
   useEffect(() => {
     if (data) {
@@ -47,8 +50,20 @@ export default function Preview(data: UserDetails) {
     }
   }
 
+  const getColorLighter = (color: string) => {
+    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + 70)).toString(16)).substr(-2));
+  }
+
   return (
-    <div className={`w-full md:max-w-[400px] h-screen py-10 px-4 mx-auto ${selectedTheme?.themeClass}`}>
+    <div className={`w-full md:max-w-[400px] h-screen py-10 px-4 mx-auto ${selectedTheme?.themeClass}`}
+      style={{ 
+        backgroundColor: backgroundColor,
+        backgroundImage: `linear-gradient(
+          ${gradientDirection === 'gradient-up' ? '180deg' : '0deg'}, 
+          ${getColorLighter(backgroundColor)}, ${backgroundColor}
+        )`
+      }}
+    >
       <img 
         className="w-20 h-20 mx-auto bg-gray-50 rounded-full flex justify-center items-center overflow-hidden"
         src={avatar ? avatar:'https://placehold.co/50'} 
@@ -65,6 +80,7 @@ export default function Preview(data: UserDetails) {
               href={data.url}
               target="_blank"
               className="link-button rounded px-3 py-2 pointer-events-none"
+              style={{ backgroundColor: buttonColor }}
             >
               <div className="link-text text-xs text-center">
                 {data.title}
