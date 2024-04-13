@@ -38,7 +38,7 @@ export default function Login() {
         const user = JSON.parse(googleUserData).user;
         if (user.email) checkIfEmailRegistered(user.email, JSON.parse(googleUserData).access_token);
       }
-    }, 200);
+    }, 350);
   },[])
 
   const checkIfEmailRegistered = async (email: string, token: string) => {

@@ -75,8 +75,10 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex md:order-2 space-x-3 md:space-x-3 rtl:space-x-reverse">
+          <Link href="upgrade">
+            <Button variant="secondary">Upgrade to Pro</Button>
+          </Link>
           <Button variant="outline">Share</Button>
-          {/* <Button onClick={() => publish(linkDetails)}>Publish</Button> */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="w-10 h-10 rounded-full overflow-hidden p-0">
