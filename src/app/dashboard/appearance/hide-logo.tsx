@@ -6,7 +6,14 @@ import { LockKeyhole } from "lucide-react";
 
 export default function HideLogo({ onOpen }: any) {
   return (
-    <Card>
+    <Card className="relative overflow-hidden">
+
+      <div className="absolute bg-gray-500 w-full h-full top-0 z-10 opacity-90 flex justify-center items-center">
+        <div className="text-white text-2xl font-bold">
+          Coming Soon
+        </div>
+      </div>
+
       <CardHeader>
         <CardContent className="p-0 relative">
           <div className="flex flex-col space-y-5">

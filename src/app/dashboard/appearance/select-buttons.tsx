@@ -44,7 +44,14 @@ export default function SelectButtons({ onOpen }: any) {
   const debouncedColorChange = useCallback(debounce(handleColorChange, 500), []);
 
   return (
-    <Card>
+    <Card className="relative overflow-hidden">
+
+      <div className="absolute bg-gray-500 w-full h-full top-0 z-10 opacity-90 flex justify-center items-center">
+        <div className="text-white text-2xl font-bold">
+          Coming Soon
+        </div>
+      </div>
+
       <CardHeader>
         <CardTitle className="text-lg">Buttons</CardTitle>
       </CardHeader>

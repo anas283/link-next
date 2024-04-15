@@ -47,7 +47,14 @@ export default function SelectFonts({ onOpen }: any) {
   const debouncedColorChange = useCallback(debounce(handleColorChange, 200), []);
 
   return (
-    <Card>
+    <Card className="relative overflow-hidden">
+
+      <div className="absolute bg-gray-500 w-full h-full top-0 z-10 opacity-90 flex justify-center items-center">
+        <div className="text-white text-2xl font-bold">
+          Coming Soon
+        </div>
+      </div>
+
       <CardHeader>
         <CardTitle className="text-lg">Fonts</CardTitle>
         <CardContent className="px-0">
