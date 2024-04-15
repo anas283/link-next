@@ -80,7 +80,7 @@ export default function SelectBackgrounds({ onOpen }: any) {
                 >
                   <div className={`border rounded overflow-hidden cursor-pointer relative ${selectedBackground?.name === background.name ? 'border-black border-dashed border-2':''}`}>
                     <Image src={background.previewImage} alt={background.name} width={120} height={200} className="object-cover w-auto h-auto" />
-                    {linkDetails.tier === 'FREE' && background.type === 'Premium' && 
+                    {linkDetails.tier === 'FREE' || background.type === 'Premium' && 
                       <div>
                         <span className="absolute top-2 right-2 text-xs text-white bg-black rounded py-1 px-2 flex flex-row items-center">
                           Upgrade
