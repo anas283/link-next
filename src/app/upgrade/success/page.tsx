@@ -1,6 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
+import { useAppSelector } from "@/lib/hooks";
+import supabase from "@/utils/supabase";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,6 +14,8 @@ export default function SuccessPayment() {
   const searchParams = useSearchParams();
   const checkout_id = searchParams.get('checkout_id');
 
+  const linkDetails: any = useAppSelector(state => state.link.linkDetails);
+
   useEffect(() => {
     if (checkout_id) {
       checkPaymentStatus(checkout_id);
@@ -20,15 +24,25 @@ export default function SuccessPayment() {
 
   const checkPaymentStatus = async (checkoutSessionId: string) => {
     // TODO: change to live key
-    const stripe = new Stripe(process.env.STRIPE_TEST_KEY!)
+    const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_TEST_KEY!)
     const session = await stripe.checkout.sessions.retrieve(
       checkoutSessionId
     );
     if (session.payment_status === "paid") {
-      setSuccess(true);
       const choosedPlan: string = localStorage.getItem("choose-plan") || '';
+      setSuccess(true);
       setPlan(choosedPlan);
+      changeUserTier(choosedPlan);
     }
+  }
+
+  const changeUserTier = async (tier: string) => {
+    const { error } = await supabase
+      .from('users')
+      .update({
+        tier: tier.toUpperCase()
+      })
+      .eq('id', linkDetails.id)
   }
 
   return (

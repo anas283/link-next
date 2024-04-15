@@ -75,9 +75,13 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex md:order-2 space-x-3 md:space-x-3 rtl:space-x-reverse">
-          <Link href="upgrade">
-            <Button variant="secondary">Upgrade to Pro</Button>
-          </Link>
+          {linkDetails.tier === "FREE" ?
+            <Link href="upgrade">
+              <Button variant="secondary">Upgrade to Pro</Button>
+            </Link>
+          :
+            <Button className="pointer-events-none text-xs">{linkDetails.tier}</Button>
+          }
           <Button variant="outline">Share</Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

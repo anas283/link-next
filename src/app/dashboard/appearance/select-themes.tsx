@@ -12,9 +12,10 @@ export default function SelectThemes({ onOpen }: any) {
   const dispatch = useAppDispatch();
 
   const selectTheme = async (theme: ITheme) => {
-    const userTier = "Free";
-
-    if (userTier === "Free" && theme.type === "Free") {
+    if (
+      (linkDetails.tier === "FREE" && theme.type === "Free") ||
+      linkDetails.tier === "PRO" || linkDetails.tier === "PREMIUM"
+    ) {
       dispatch(setTheme(theme));
       dispatch(setBackground({
         name: "",
@@ -47,7 +48,7 @@ export default function SelectThemes({ onOpen }: any) {
               >
                 <div className={`border rounded overflow-hidden cursor-pointer relative ${selectedTheme?.name === theme.name ? 'border-black border-dashed border-2':''}`}>
                   <Image src={theme.previewImage} alt={theme.name} width={120} height={200} className="object-cover w-auto h-auto" />
-                  {theme.type === 'Premium' && 
+                  {linkDetails.tier === 'FREE' && theme.type === 'Premium' && 
                     <div>
                       <span className="absolute top-2 right-2 text-xs text-white bg-black rounded py-1 px-2 flex flex-row items-center">
                         Upgrade
