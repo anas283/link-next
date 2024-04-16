@@ -50,7 +50,11 @@ export default function Analytics() {
   }
 
   const calculateTotalClicks = (data: ILink[]) => {
-    data.map((x) => setTotalClicks(totalClicks + x.clicks));
+    let total = 0;
+    for (let i = 0; i < data.length; i++) {
+      total += data[i].clicks;
+    }
+    setTotalClicks(total);
   }
 
   return (
