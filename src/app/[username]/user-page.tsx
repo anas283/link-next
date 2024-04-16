@@ -17,6 +17,7 @@ export default function UserPage(data: UserDetails) {
       }
       getUserLinks(data.id!)
       getAppearance(data.id!)
+      handleViewCounter(data)
     }
   },[])
 
@@ -61,6 +62,40 @@ export default function UserPage(data: UserDetails) {
     }
   }
 
+  const handleViewCounter = async (data: UserDetails) => {
+    const { error } = await supabase
+      .from('users')
+      .update({
+        views: data.views! + 1
+      })
+      .eq('id', data.id)
+
+    if (error) {
+      console.log(error);
+    }
+  }
+
+  const handleLinkCounter = async (id: number) => {
+    const { data } = await supabase
+      .from('links')
+      .select()
+      .eq('id', id)
+
+    if (data) {
+      const clicks = data[0].clicks;
+      const { error } = await supabase
+        .from('links')
+        .update({
+          clicks: clicks + 1
+        })
+        .eq('id', id)
+
+      if (error) {
+        console.log(error);
+      }
+    }
+  }
+
   return (
     <div className={`w-full h-screen ${appearance?.themeClass}`}>
       <div className="md:max-w-[400px] py-10 px-4 mx-auto">
@@ -80,6 +115,7 @@ export default function UserPage(data: UserDetails) {
                 href={data.url}
                 target="_blank"
                 className="link-button rounded px-4 py-3 cursor-pointer"
+                onClick={() => handleLinkCounter(data.id)}
               >
                 <div className="link-text text-center">
                   {data.title}

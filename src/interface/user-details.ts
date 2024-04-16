@@ -5,5 +5,7 @@ export interface UserDetails {
   bio?: string;
   email?: string;
   links?: string;
+  tier?: string;
+  views?: number;
   created_at?: string;
 }

@@ -17,7 +17,8 @@ export interface ILink {
   uid: number,
   title: string,
   url: string,
-  mode: string
+  mode: string,
+  clicks: number
 }
 
 export interface ILinkDetails {
