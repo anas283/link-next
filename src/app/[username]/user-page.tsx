@@ -4,6 +4,8 @@ import supabase from "@/utils/supabase";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ITheme } from "../dashboard/appearance/theme-list";
+import LinkwajoLogoSmall from "../../../public/link-logo-small.png"; 
+import Image from "next/image";
 
 export default function UserPage(data: UserDetails) {
   const [links, setLinks] = useState<ILink[]>();
@@ -12,6 +14,9 @@ export default function UserPage(data: UserDetails) {
 
   useEffect(() => {
     if (data) {
+      console.log('data');
+      console.log(data);
+      
       if (data.avatar) {
         downloadAvatar(data.avatar!);
       }
@@ -124,6 +129,16 @@ export default function UserPage(data: UserDetails) {
             )
           })}
         </div>
+
+        {data.is_logo_visible &&
+          <Link 
+            href="/"
+            className="w-fit p-2 mx-auto bg-white rounded-full border border-black flex items-center gap-2"
+          >
+            <Image src={LinkwajoLogoSmall} alt="linkwojo" className="h-6 w-auto" />
+            <h6 className="text-sm font-semibold mr-2">Create your Linkwajo</h6>
+          </Link>
+        }
       </div>
     </div>
   )

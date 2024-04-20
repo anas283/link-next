@@ -7,5 +7,6 @@ export interface UserDetails {
   links?: string;
   tier?: string;
   views?: number;
+  is_logo_visible?: boolean;
   created_at?: string;
 }

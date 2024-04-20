@@ -18,11 +18,13 @@ import SelectThemes from "./select-themes";
 import SelectBackgrounds from "./select-background";
 import HideLogo from "./hide-logo";
 import SelectFonts from "./select-font";
+import { UserDetails } from "@/interface/user-details";
 
 export default function Themes() {
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
 
+  const userDetails: UserDetails = useAppSelector(state => state.auth.userDetails);
   const linkDetails: any = useAppSelector(state => state.link.linkDetails);
 
   const handleOpenDialog = () => {
@@ -34,10 +36,10 @@ export default function Themes() {
       <div className="max-w-screen-xl mx-auto flex justify-between">
         <div className="w-full md:w-1/2 flex flex-col gap-y-5 pb-5">
           <SelectThemes onOpen={handleOpenDialog} />
+          <HideLogo user={userDetails} onOpen={handleOpenDialog} />
           <SelectBackgrounds onOpen={handleOpenDialog} />
           <SelectButtons onOpen={handleOpenDialog} />
           <SelectFonts onOpen={handleOpenDialog} />
-          <HideLogo onOpen={handleOpenDialog} />
         </div>
         <div className="w-full md:w-1/2 p-4 flex justify-center">
           <div className="fixed bg-gray-400 rounded-3xl h-[77vh] max-h-[600px] shadow overflow-hidden border-4 border-black aspect-9/19">

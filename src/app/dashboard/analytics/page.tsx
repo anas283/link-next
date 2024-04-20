@@ -64,10 +64,10 @@ export default function Analytics() {
           <h2 className="text-3xl font-bold tracking-tight">
             Hi, Welcome back 👋
           </h2>
-          <div className="hidden md:flex items-center space-x-2">
+          {/* <div className="hidden md:flex items-center space-x-2">
             <CalendarDateRangePicker />
             <Button>Download</Button>
-          </div>
+          </div> */}
         </div>
         <div className="space-y-4">
           <div className="space-y-4">
@@ -116,7 +116,12 @@ export default function Analytics() {
               </Card>
             </div>
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="col-span-4">
+              <Card className="col-span-4 relative overflow-hidden">
+                <div className="absolute bg-gray-500 w-full h-full top-0 z-10 opacity-90 flex justify-center items-center">
+                  <div className="text-white text-2xl font-bold">
+                    Coming Soon
+                  </div>
+                </div>
                 <CardHeader>
                   <CardTitle className="text-base font-bold">Overview</CardTitle>
                 </CardHeader>

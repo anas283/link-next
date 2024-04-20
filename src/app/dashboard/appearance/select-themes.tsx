@@ -48,7 +48,7 @@ export default function SelectThemes({ onOpen }: any) {
               >
                 <div className={`border rounded overflow-hidden cursor-pointer relative ${selectedTheme?.name === theme.name ? 'border-black border-dashed border-2':''}`}>
                   <Image src={theme.previewImage} alt={theme.name} width={120} height={200} className="object-cover w-auto h-auto" />
-                  {linkDetails.tier === 'FREE' || theme.type === 'Premium' && 
+                  {linkDetails.tier === 'FREE' && 
                     <div>
                       <span className="absolute top-2 right-2 text-xs text-white bg-black rounded py-1 px-2 flex flex-row items-center">
                         Upgrade

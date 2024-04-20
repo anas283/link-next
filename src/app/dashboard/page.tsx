@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog"
 import { ILink, setLinkDetails, setTheme } from "@/lib/store/linkSlice";
 import { useToast } from "@/components/ui/use-toast"
+import { setUserDetails } from "@/lib/store/authSlice";
 
 export default function Dashboard() {
   const { register, setValue, getValues, control, handleSubmit, watch } = useForm();
@@ -69,6 +70,7 @@ export default function Dashboard() {
           dispatch(setLinkDetails(data[0]));
           getUserLinks(data[0].id)
           getAppearance(data[0].id)
+          dispatch(setUserDetails(data[0]));
         }
       }
     }

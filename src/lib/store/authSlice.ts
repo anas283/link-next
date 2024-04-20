@@ -1,14 +1,15 @@
+import { UserDetails } from "@/interface/user-details";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface IAuthState {
   authState: boolean;
-  userDetails: []
+  userDetails: UserDetails
 }
 
 const initialState: IAuthState = {
   authState: false,
-  userDetails: []
+  userDetails: {}
 };
 
 export const authSlice = createSlice({
@@ -18,7 +19,7 @@ export const authSlice = createSlice({
     setAuthState: (state, action: PayloadAction<boolean>) => {
       state.authState = action.payload;
     },
-    setUserDetails: (state, action: PayloadAction<[]>) => {
+    setUserDetails: (state, action: PayloadAction<{}>) => {
       state.userDetails = action.payload
     }
   },
