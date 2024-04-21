@@ -24,7 +24,7 @@ import LoginCover from "../../../public/home/login-cover.png";
 import Image from "next/image";
 
 export default function Register() {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterInputs>();
+  const { register, handleSubmit, watch, getValues, formState: { errors } } = useForm<RegisterInputs>();
   const [isClaimed, setIsClaimed] = useState(false);
   const router = useRouter();
 
@@ -113,8 +113,6 @@ export default function Register() {
       .insert({ username: username, email: email })
       .select()
 
-    setLoading(false);
-
     if (data) {
       setDefaultAppearance(data);
     }
@@ -127,6 +125,15 @@ export default function Register() {
       .select()
 
     if (data) {
+      const { data } = await supabase.auth.signInWithPassword({
+        email: getValues("email"),
+        password: getValues("password"),
+      })
+  
+      if (data) {
+        setCookie("token", data.session?.access_token);
+      }
+      setLoading(false);
       router.push('/dashboard');
     }
   }
