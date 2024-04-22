@@ -36,7 +36,7 @@ export default function Themes() {
       <div className="max-w-screen-xl mx-auto flex justify-between">
         <div className="w-full md:w-1/2 flex flex-col gap-y-5 pb-5">
           <SelectThemes onOpen={handleOpenDialog} />
-          <HideLogo user={userDetails} onOpen={handleOpenDialog} />
+          <HideLogo onOpen={handleOpenDialog} />
           <SelectBackgrounds onOpen={handleOpenDialog} />
           <SelectButtons onOpen={handleOpenDialog} />
           <SelectFonts onOpen={handleOpenDialog} />

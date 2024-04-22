@@ -60,7 +60,7 @@ export default function SelectFonts({ onOpen }: any) {
         <CardContent className="px-0">
           <div className="flex flex-col space-y-5">
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="w-full max-w-[400px] flex justify-between">
                   {font}
                   <ChevronDown className="w-4 h-4 ml-2" />

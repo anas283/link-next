@@ -12,6 +12,7 @@ import {
   LogOut,
   Settings,
   User,
+  Zap,
 } from "lucide-react"
  
 import {
@@ -91,11 +92,13 @@ export default function Navbar() {
         <div className="flex md:order-2 space-x-3 md:space-x-3 rtl:space-x-reverse">
           {linkDetails.tier === "FREE" &&
             <Link href="upgrade">
-              <Button variant="secondary">Upgrade to Pro</Button>
+              <Button variant="secondary">
+                <Zap className="w-4 h-4 mr-2 text-blue-500" />Upgrade to Pro
+              </Button>
             </Link>
           }
           <Popover>
-            <PopoverTrigger>
+            <PopoverTrigger asChild>
               <Button variant="outline">Share</Button>
             </PopoverTrigger>
             <PopoverContent className="w-fit">

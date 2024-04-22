@@ -1,4 +1,5 @@
 import { ILink } from "@/lib/store/linkSlice";
+import { Text } from "lucide-react";
 
 export function TopPerformingLinks({links}: {links: ILink[]}) {
   return (
@@ -18,6 +19,15 @@ export function TopPerformingLinks({links}: {links: ILink[]}) {
           </div>
         )
       })}
+
+      {links.length === 0 &&
+        <div className="w-full h-64 my-auto flex justify-center items-center">
+          <div>
+            <Text className="w-8 h-8 text-gray-400 mx-auto" />
+            <h6 className="text-sm text-gray-400 mt-2">No records</h6>
+          </div>
+        </div>
+      }
     </div>
   );
 }

@@ -9,21 +9,18 @@ import { useEffect, useState } from "react";
 import supabase from "@/utils/supabase";
 import { useAppSelector } from "@/lib/hooks";
 
-interface IUserProps {
-  user: UserDetails
-}
-
 interface ButtonProps {
   onOpen: (params: any) => any;
 }
 
-export default function HideLogo({ user }: IUserProps, { onOpen }: ButtonProps) {
+export default function HideLogo({ onOpen }: ButtonProps) {
   const [hideLogo, setHideLogo] = useState(false);
 
+  const userDetails: UserDetails = useAppSelector(state => state.auth.userDetails);
   const linkDetails: any = useAppSelector(state => state.link.linkDetails);
 
   useEffect(() => {
-    setHideLogo(user.is_logo_visible!);
+    setHideLogo(userDetails.is_logo_visible!);
   },[])
 
   const handleHideLogo = async () => {
@@ -53,7 +50,7 @@ export default function HideLogo({ user }: IUserProps, { onOpen }: ButtonProps) 
               <Image src={LinkwajoLogo} alt="linkwojo" className="w-auto h-10" />
             </div>
           </div>
-          {user.tier === 'FREE' &&
+          {userDetails.tier === 'FREE' &&
             <span className="cursor-pointer absolute top-0 right-0 text-xs text-white bg-black rounded py-1 px-2 flex flex-row items-center"
               onClick={onOpen}
             >

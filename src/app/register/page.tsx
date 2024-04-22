@@ -114,7 +114,7 @@ export default function Register() {
       .select()
 
     if (data) {
-      setDefaultAppearance(data);
+      setDefaultAppearance(data[0]);
     }
   }
 

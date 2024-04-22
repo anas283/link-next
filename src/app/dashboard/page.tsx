@@ -62,7 +62,7 @@ export default function Dashboard() {
           .eq('email', user.email)
 
         if (data) {
-          downloadAvatar(data[0].avatar)
+          if (data[0].avatar) downloadAvatar(data[0].avatar);
           setUserData(data[0]);
           setValue('username', data[0].username);
           setValue('bio', data[0].bio);
@@ -394,10 +394,10 @@ export default function Dashboard() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="mt-4 w-full"
+                  className={`w-full ${fields.length > 0} ? 'mt-4':'mt-0'`}
                   onClick={() => append({ uid: userData?.id, title: '', url: '' })}
                 >
-                  <Plus className="w-4 h-4 mr-1" /> Add more link
+                  <Plus className="w-4 h-4 mr-1" /> Add link
                 </Button>
               </form>
             </CardContent>

@@ -42,6 +42,7 @@ export default function Analytics() {
     const { data } = await supabase
       .from('links')
       .select()
+      .eq('uid', linkDetails.id)
 
     if (data) {
       setLinks(data);
@@ -100,7 +101,7 @@ export default function Analytics() {
                   <FolderKanban className="w-5 h-5 text-gray-400" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{((totalClicks/totalViews)*100).toFixed(2)}%</div>
+                  <div className="text-2xl font-bold">{((totalClicks ?? 0/totalViews ?? 0)*100).toFixed(2)}%</div>
                 </CardContent>
               </Card>
               <Card>
