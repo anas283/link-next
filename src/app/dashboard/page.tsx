@@ -207,6 +207,7 @@ export default function Dashboard() {
     const { data, error } = await supabase
       .from('links')
       .select()
+      .eq('uid', userData?.id)
     return data;
   }
 
@@ -267,6 +268,15 @@ export default function Dashboard() {
       toast({
         description: "Your link has been deleted.",
       })
+    }
+  }
+
+  const cancelAddLink = (index: number, link: any) => {
+    if (!link.mode) {
+      remove(index);
+    }
+    else {
+      toggleLinkMode(index, link.mode)
     }
   }
 
@@ -375,7 +385,7 @@ export default function Dashboard() {
                             <div className="flex flex-row gap-2 justify-end">
                               <Button
                                 variant="outline"
-                                onClick={() => toggleLinkMode(index, watch('links')[index].mode)}
+                                onClick={() => cancelAddLink(index, watch('links')[index])}
                               >
                                 Cancel
                               </Button>
@@ -394,7 +404,7 @@ export default function Dashboard() {
                 <Button
                   type="button"
                   variant="outline"
-                  className={`w-full ${fields.length > 0} ? 'mt-4':'mt-0'`}
+                  className="w-full mt-4"
                   onClick={() => append({ uid: userData?.id, title: '', url: '' })}
                 >
                   <Plus className="w-4 h-4 mr-1" /> Add link
