@@ -36,10 +36,10 @@ export default function Home() {
             </div>
 
             <Image src={MockupLeftImage} alt="mockup-left"
-              className="absolute top-[55%] lg:top-[20%] right-0 lg:right-auto lg:-left-64 2xl:-left-64 w-48 lg:w-[318px] 2xl:w-[350px] rotate-12"
+              className="absolute bottom-10 lg:top-[20%] right-0 lg:right-auto lg:-left-64 2xl:-left-64 w-48 lg:w-[318px] 2xl:w-[350px] rotate-12"
             />
             <Image src={MockupRightImage} alt="mockup-right"
-              className="absolute top-[55%] lg:top-[20%] left-0 lg:left-auto lg:-right-64 2xl:-right-64 w-48 lg:w-[318px] 2xl:w-[350px] -rotate-12"
+              className="absolute bottom-10 lg:top-[20%] left-0 lg:left-auto lg:-right-64 2xl:-right-64 w-48 lg:w-[318px] 2xl:w-[350px] -rotate-12"
             />
           </div>
 
