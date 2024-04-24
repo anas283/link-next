@@ -57,7 +57,9 @@ export default function Home() {
                   music, podcast, events, and beyond. Seamlessly merge them into a 
                   dynamic link-in-bio landing page engineered for maximum conversion.
                 </h4>
-                <Button className="mt-8 rounded-full px-6">Try for free now</Button>
+                <Link href="register">
+                  <Button className="mt-8 rounded-full px-6">Try for free now</Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -74,7 +76,9 @@ export default function Home() {
                   by your audience. Then, leverage QR codes to effortlessly guide offline 
                   traffic to your online presence.
                 </h4>
-                <Button className="mt-8 rounded-full px-6">Try for free now</Button>
+                <Link href="register">
+                  <Button className="mt-8 rounded-full px-6">Try for free now</Button>
+                </Link>
               </div>
             </div>
             <div className="w-full md:w-1/2 flex items-center order-1 lg:order-2 mb-5 lg:mb-0">
@@ -96,7 +100,9 @@ export default function Home() {
                   with your followers. Adapt and refine your strategy in real-time 
                   to ensure their ongoing engagement.
                 </h4>
-                <Button className="mt-5 lg:mt-8 rounded-full px-6">Try for free now</Button>
+                <Link href="register">
+                  <Button className="mt-8 rounded-full px-6">Try for free now</Button>
+                </Link>
               </div>
             </div>
           </div>
