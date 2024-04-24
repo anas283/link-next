@@ -1,61 +1,35 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
 
-enum PricingType {
-  Monthly,
-  Annually
-}
+export default function Upgrade() {
 
-export default function Templates() {
-  const router = useRouter();
-  const [pricingType, setPricingType] = useState(PricingType.Monthly);
-
-  const proPriceMonthly = 5;
-  const proPriceAnnually = 3;
-
-  const premiumPriceMonthly = 10;
-  const premiumPriceAnnually = 8;
-
-  const register = (tier?: string, frequency?: string) => {
-    if (frequency) {
-      router.push('register?tier=' + tier + '&frequency=' + frequency);
-    } else {
-      router.push('register?tier=' + tier);
-    }
+  const choosePlan = (plan: string) => {
+    localStorage.setItem("choose-plan", plan);
   }
 
   return (
     <div className="flex min-h-screen">
-      <div className="w-full max-w-6xl mx-auto px-4 lg:px-0 py-20">
+      <div className="w-full max-w-6xl mx-auto py-14">
 
         <div>
-          <h1 className="text-4xl lg:text-5xl font-bold text-center max-w-3xl mx-auto">
-            Pricing plans for everyone
-          </h1>
-          {/* <h6 className="text-[15px] text-gray-600 font-normal text-center max-w-xl mx-auto mt-8">
-            Save up to 20% on annual plan
-          </h6> */}
+          <Link href="dashboard">
+            <Button variant="ghost">
+              <ChevronLeft className="w-4 h-4 mr-2" />Back
+            </Button>
+          </Link>
         </div>
 
-        {/* <div className="flex justify-center mt-8">
-          <div className="bg-muted p-1 rounded-lg">
-            <Button 
-              onClick={() => setPricingType(PricingType.Monthly)}
-              className={`${pricingType === PricingType.Monthly ? '' : 'bg-transparent text-slate-500 hover:text-white'}`}
-            >
-              Monthly
-            </Button>
-            <Button 
-              onClick={() => setPricingType(PricingType.Annually)}
-              className={`${pricingType === PricingType.Annually ? '' : 'bg-transparent text-slate-500 hover:text-white'}`}
-            >
-              Annually
-            </Button>
-          </div>
-        </div> */}
+        <div className="mt-8 lg:mt-0">
+          <h1 className="text-3xl md:text-5xl font-bold text-center max-w-3xl mx-auto">
+            Choose the right plan for you
+          </h1>
+          <h6 className="text-[15px] text-gray-600 font-normal text-center max-w-xl mx-auto mt-4 lg:mt-8">
+            You can change at anytime 
+          </h6>
+        </div>
 
         <div className="bg-white dark:bg-gray-900">
           <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
@@ -73,18 +47,16 @@ export default function Templates() {
                     <span>Unlimited links</span>
                   </li>
                 </ul>
-                <Button variant="outline" className="mt-auto"
-                  onClick={() => register('free')}
-                >
-                  Join for free
+                <Button className="mt-auto" disabled>
+                  Current Plan
                 </Button>
               </div>
               <div className="flex flex-col p-6 md:w-[380px] text-center text-gray-900 bg-white rounded-lg border-2 border-blue-500 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
-                <h3 className="mb-4 text-2xl font-semibold">Pro</h3>
+                <h3 className="mb-4 text-2xl font-semibold text-blue-500">Pro</h3>
                 <p className="min-h-12 font-light text-gray-500 sm:text-md dark:text-gray-400">Relevant for content creators and businesses</p>
                 <div className="flex justify-center items-baseline my-6">
                   <span className="mr-2 text-5xl font-extrabold">
-                    ${ pricingType === PricingType.Monthly ? proPriceMonthly : proPriceAnnually }
+                    $5
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">/month</span>
                 </div>
@@ -117,18 +89,23 @@ export default function Templates() {
                     <span>Exclusive content</span>
                   </li>
                 </ul>
-                <Button className="mt-auto"
-                  onClick={() => register('pro', pricingType === PricingType.Monthly ? 'monthly':'annually')}
-                >
-                  Get Pro
-                </Button>
+                <Link 
+                  // href="https://buy.stripe.com/test_cN25l33uhcKp63K8ww"
+                  href="https://buy.stripe.com/9AQ03f2GkdIG1LW9AA" 
+                > 
+                  <Button className="mt-auto bg-blue-500 w-full"
+                    onClick={() => choosePlan("Pro")}
+                  >
+                    Get Pro
+                  </Button>
+                </Link>
               </div>
-              {/* <div className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
+              {/* <div className="flex flex-col p-6 md:w-[380px] text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
                 <h3 className="mb-4 text-2xl font-semibold">Premium</h3>
                 <p className="min-h-12 font-light text-gray-500 sm:text-md dark:text-gray-400">Best for brands and businesses</p>
                 <div className="flex justify-center items-baseline my-6">
                   <span className="mr-2 text-5xl font-extrabold">
-                    ${ pricingType === PricingType.Monthly ? premiumPriceMonthly : premiumPriceAnnually }
+                    $10
                   </span>
                   <span className="text-gray-500 dark:text-gray-400">/month</span>
                 </div>
@@ -153,11 +130,17 @@ export default function Templates() {
                     <span>Exclusive content</span>
                   </li>
                 </ul>
-                <Button variant="outline" className="mt-auto"
-                  onClick={() => register('premium', pricingType === PricingType.Monthly ? 'monthly':'annually')}
+                <Link 
+                  href="https://buy.stripe.com/test_aEUdRz7KxdOtdwc289"
+                  // href="https://buy.stripe.com/8wMcQ16WA0VUeyIdQS" 
+                  // target="_blank"
                 >
-                  Get Premium
-                </Button>
+                  <Button className="mt-auto w-full border-black"
+                    onClick={() => choosePlan("Premium")}
+                  >
+                    Get Premium
+                  </Button>
+                </Link>
               </div> */}
             </div>
           </div>

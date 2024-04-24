@@ -1,10 +1,15 @@
-import { ITheme } from "@/app/dashboard/themes/theme-list";
+import { IBackground } from "@/app/dashboard/appearance/background-list";
+import { ITheme } from "@/app/dashboard/appearance/theme-list";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface ILinkState {
   linkDetails: ILinkDetails[],
-  selectedTheme: ITheme
+  selectedTheme: ITheme,
+  selectedBackground: IBackground,
+  backgroundColor: string,
+  buttonColor: string,
+  gradientDirection: string
 }
 
 export interface ILink {
@@ -12,7 +17,8 @@ export interface ILink {
   uid: number,
   title: string,
   url: string,
-  mode: string
+  mode: string,
+  clicks: number
 }
 
 export interface ILinkDetails {
@@ -28,7 +34,15 @@ const initialState: ILinkState = {
     name: '',
     themeClass: '',
     previewImage: ''
-  }
+  },
+  selectedBackground: {
+    name: '',
+    bgClass: '',
+    previewImage: ''
+  },
+  backgroundColor: '',
+  buttonColor: '',
+  gradientDirection: ''
 };
 
 export const linkSlice = createSlice({
@@ -40,9 +54,28 @@ export const linkSlice = createSlice({
     },
     setTheme: (state, action: PayloadAction<ITheme>) => {
       state.selectedTheme = action.payload
-    }
+    },
+    setBackground: (state, action: PayloadAction<ITheme>) => {
+      state.selectedBackground = action.payload
+    },
+    setBackgroundColor: (state, action: PayloadAction<string>) => {
+      state.backgroundColor = action.payload
+    },
+    setButtonColor: (state, action: PayloadAction<string>) => {
+      state.buttonColor = action.payload
+    },
+    setGradientDirection: (state, action: PayloadAction<string>) => {
+      state.gradientDirection = action.payload
+    },
   },
 });
 
-export const { setLinkDetails, setTheme } = linkSlice.actions;
+export const { 
+  setLinkDetails, 
+  setTheme, 
+  setBackground,
+  setBackgroundColor,
+  setButtonColor,
+  setGradientDirection 
+} = linkSlice.actions;
 export const linkReducer = linkSlice.reducer;

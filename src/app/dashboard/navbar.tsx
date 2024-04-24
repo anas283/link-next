@@ -12,6 +12,7 @@ import {
   LogOut,
   Settings,
   User,
+  Zap,
 } from "lucide-react"
  
 import {
@@ -27,15 +28,30 @@ import {
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { deleteCookie } from "cookies-next";
 import supabase from "@/utils/supabase";
-import { useEffect } from "react";
-import { publish } from "./publish";
 import Image from "next/image";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge"
+
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose
+} from "@/components/ui/sheet"
+import { Menu } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href;
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const [isCopied, setIsCopied] = useState(false);
 
   const userDetails: any = useAppSelector(state => state.auth.userDetails);
   const linkDetails: any = useAppSelector(state => state.link.linkDetails);
@@ -50,6 +66,13 @@ export default function Navbar() {
     }
   }
 
+  const copyLinkwajoURL = () => {
+    setIsCopied(!isCopied);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 1000);
+  }
+
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900 border-b">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -62,21 +85,49 @@ export default function Navbar() {
               <Link href="/dashboard" className={`text-sm block py-2 ${isActive('/dashboard') ? 'text-black':'text-gray-500'}`}>
                 Links
               </Link>
-              <Link href="/dashboard/themes" className={`text-sm block py-2 ${isActive('/dashboard/themes') ? 'text-black':'text-gray-500'}`}>
-                Themes
+              <Link href="/dashboard/appearance" className={`text-sm block py-2 ${isActive('/dashboard/appearance') ? 'text-black':'text-gray-500'}`}>
+                Appearance
               </Link>
               <Link href="/dashboard/analytics" className={`text-sm block py-2 ${isActive('/dashboard/analytics') ? 'text-black':'text-gray-500'}`}>
                 Analytics
               </Link>
-              <Link href="/dashboard/settings" className={`text-sm block py-2 ${isActive('/dashboard/settings') ? 'text-black':'text-gray-500'}`}>
+              {/* <Link href="/dashboard/settings" className={`text-sm block py-2 ${isActive('/dashboard/settings') ? 'text-black':'text-gray-500'}`}>
                 Settings
-              </Link>
+              </Link> */}
             </ul>
           </div>
         </div>
         <div className="flex md:order-2 space-x-3 md:space-x-3 rtl:space-x-reverse">
-          <Button variant="outline">Share</Button>
-          {/* <Button onClick={() => publish(linkDetails)}>Publish</Button> */}
+          {linkDetails.tier === "FREE" &&
+            <Link href="upgrade">
+              <Button variant="secondary">
+                <Zap className="w-4 h-4 mr-2 text-blue-500" />Upgrade to Pro
+              </Button>
+            </Link>
+          }
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="hidden lg:flex">Share</Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-fit">
+              <h6 className="font-semibold">Share your Linkwajo</h6>
+              <p className="text-sm text-gray-500 mt-1 w-11/12">
+                Get more visitors by sharing Linkwajo everywhere
+              </p>
+              <CopyToClipboard 
+                text={`https://www.linkwajo.com/${linkDetails.username}`}
+                onCopy={() => copyLinkwajoURL()}
+              >
+                <Button variant="outline" className="w-full flex justify-between items-center p-2 cursor-pointer border rounded mt-4 gap-x-2">
+                  <Image src={LinkwajoLogoSmall} alt="linkwojo" className="w-6 h-6" />
+                  <div className="text-sm">linkwajo.com/{linkDetails.username}</div>
+                  <div className="text-sm text-gray-500">
+                    {isCopied ? 'Copied!':'Copy'}
+                  </div>
+                </Button>
+              </CopyToClipboard>
+            </PopoverContent>
+          </Popover>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="w-10 h-10 rounded-full overflow-hidden p-0">
@@ -88,9 +139,12 @@ export default function Navbar() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <div className="flex justify-between items-center">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <Badge className="text-[10px] h-5 mr-1.5 pointer-events-none">{linkDetails.tier}</Badge>
+              </div>
               <DropdownMenuSeparator />
-              <DropdownMenuGroup>
+              {/* <DropdownMenuGroup>
                 <DropdownMenuItem>
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
@@ -107,10 +161,12 @@ export default function Navbar() {
                   <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator /> */}
               <DropdownMenuItem>
-                <LifeBuoy className="mr-2 h-4 w-4" />
-                <span>Support</span>
+                <Link href="/support" className="flex items-center">
+                  <LifeBuoy className="mr-2 h-4 w-4" />
+                  <span>Support</span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => logout()}>
                 <LogOut className="mr-2 h-4 w-4" />
@@ -119,12 +175,32 @@ export default function Navbar() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <button data-collapse-toggle="navbar-cta" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-cta" aria-expanded="false">
-            <span className="sr-only">Open main menu</span>
-            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15"/>
-            </svg>
-          </button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="flex lg:hidden px-0 bg-transparent border-none">
+                <Menu className="w-8 h-8" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <div className="flex flex-col gap-5 my-10">
+                <SheetClose asChild>
+                  <Link href="/dashboard" className={`text-lg block py-2 ${isActive('/dashboard') ? 'text-black':'text-gray-500'}`}>
+                    Links
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link href="/dashboard/appearance" className={`text-lg block py-2 ${isActive('/dashboard/appearance') ? 'text-black':'text-gray-500'}`}>
+                    Appearance
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link href="/dashboard/analytics" className={`text-lg block py-2 ${isActive('/dashboard/analytics') ? 'text-black':'text-gray-500'}`}>
+                    Analytics
+                  </Link>
+                </SheetClose>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>

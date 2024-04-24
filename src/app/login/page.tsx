@@ -15,6 +15,8 @@ import {
 import { useAppDispatch } from "@/lib/hooks";
 import { setCookie } from "cookies-next";
 import supabase from "@/utils/supabase";
+import LoginCover from "../../../public/home/login-cover.png";
+import Image from "next/image";
 
 type LoginInputs = {
   email: string,
@@ -36,7 +38,7 @@ export default function Login() {
         const user = JSON.parse(googleUserData).user;
         if (user.email) checkIfEmailRegistered(user.email, JSON.parse(googleUserData).access_token);
       }
-    }, 200);
+    }, 350);
   },[])
 
   const checkIfEmailRegistered = async (email: string, token: string) => {
@@ -94,9 +96,9 @@ export default function Login() {
  
   return (
     <div className="min-h-screen min-w-screen flex items-center">
-      <div className="max-w-6xl flex mx-auto justify-between px-8">
+      <div className="w-full max-w-4xl flex mx-auto flex-col lg:flex-row lg:justify-between px-8">
 
-        <div className="w-1/2 pr-10 flex items-center">
+        <div className="w-full lg:w-1/2 lg:pr-10 flex items-center order-2 lg:order-1 mt-10 lg:mt-0">
           <form onSubmit={handleSubmit(onSubmit)} className="w-full">
             <h1 className="text-3xl font-bold">Log in to your Link</h1>
             <h6 className="text-gray-500 mt-3">Welcome back!</h6>
@@ -128,7 +130,7 @@ export default function Login() {
             <div className="mt-5">
               {watch("email") ?
                 <div>
-                  <Button type="submit" disabled={loading}>
+                  <Button type="submit" disabled={loading} className="rounded-full px-6">
                     {loading &&
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     }
@@ -136,14 +138,14 @@ export default function Login() {
                   </Button>
                 </div>
               :
-                <Button onClick={(e) => signInWithGoogle(e)}>Sign in with Google</Button>
+                <Button onClick={(e) => signInWithGoogle(e)} className="rounded-full px-6">Sign in with Google</Button>
               }
             </div>
           </form>
         </div>
 
-        <div className="w-1/2 pl-10">
-          <img src="https://placehold.co/600x400" alt="image" className="rounded-lg" />
+        <div className="w-full lg:w-1/2 pl-10 flex justify-center items-center order-1 lg:order-2">
+          <Image src={LoginCover} alt="login" width={216} height={228} />
         </div>
 
       </div>

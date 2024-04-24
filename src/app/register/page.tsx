@@ -20,9 +20,11 @@ type RegisterInputs = {
   email: string,
   password: string
 }
+import LoginCover from "../../../public/home/login-cover.png";
+import Image from "next/image";
 
 export default function Register() {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterInputs>();
+  const { register, handleSubmit, watch, getValues, formState: { errors } } = useForm<RegisterInputs>();
   const [isClaimed, setIsClaimed] = useState(false);
   const router = useRouter();
 
@@ -76,6 +78,7 @@ export default function Register() {
     } else {
       setAvailable(true);
       localStorage.setItem('search-username', username);
+      setUsername(username);
     }
 
     setLoading(false);
@@ -110,10 +113,8 @@ export default function Register() {
       .insert({ username: username, email: email })
       .select()
 
-    setLoading(false);
-
     if (data) {
-      setDefaultAppearance(data);
+      setDefaultAppearance(data[0]);
     }
   }
 
@@ -124,6 +125,15 @@ export default function Register() {
       .select()
 
     if (data) {
+      const { data } = await supabase.auth.signInWithPassword({
+        email: getValues("email"),
+        password: getValues("password"),
+      })
+  
+      if (data) {
+        setCookie("token", data.session?.access_token);
+      }
+      setLoading(false);
       router.push('/dashboard');
     }
   }
@@ -145,15 +155,15 @@ export default function Register() {
 
   return (
     <div className="min-h-screen min-w-screen flex items-center">
-      <div className="max-w-6xl flex mx-auto justify-between px-8">
+      <div className="w-full max-w-4xl flex mx-auto flex-col lg:flex-row lg:justify-between px-8">
 
-        <div className="w-1/2 pr-10 flex items-center">
+        <div className="w-full lg:w-1/2 lg:pr-10 flex items-center order-2 lg:order-1 mt-10 lg:mt-0">
           {isClaimed ?
             <form onSubmit={handleSubmit(onSubmit)}>
               <Button variant="ghost" onClick={() => setIsClaimed(!isClaimed)} className="p-0 hover:bg-transparent">
                 <MoveLeft className="h-6 w-6" />
               </Button>
-              <h6 className="text-gray-500 mt-3">link.me/{username} is yours!</h6>
+              <h6 className="text-gray-500 mt-3">linkwajo.com/{username} is yours!</h6>
               <h1 className="text-3xl font-bold">Now, create your account.</h1>
 
               {error &&
@@ -183,7 +193,7 @@ export default function Register() {
               <div className="mt-5">
                 {watch("email") ?
                   <div>
-                    <Button type="submit" disabled={loading}>
+                    <Button type="submit" disabled={loading} className="rounded-full px-6">
                       {loading &&
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       }
@@ -191,7 +201,7 @@ export default function Register() {
                     </Button>
                   </div>
                 :
-                  <Button onClick={(e) => signUpWithGoogle(e)}>
+                  <Button onClick={(e) => signUpWithGoogle(e)} className="rounded-full px-6">
                     Sign up with Google
                   </Button>
                 }
@@ -230,7 +240,7 @@ export default function Register() {
                   </div>
                 }
               </div>
-              <Button className={`mt-5 ${search ? "visible":"invisible"}`} onClick={() => setIsClaimed(!isClaimed)}
+              <Button className={`rounded-full px-6 mt-5 ${search ? "visible":"invisible"}`} onClick={() => setIsClaimed(!isClaimed)}
                 disabled={loading || !available}
               >
                 Grab my link
@@ -239,8 +249,8 @@ export default function Register() {
           }
         </div>
 
-        <div className="w-1/2 pl-10">
-          <img src="https://placehold.co/600x400" alt="image" className="rounded-lg" />
+        <div className="w-full lg:w-1/2 pl-10 flex justify-center items-center order-1 lg:order-2">
+          <Image src={LoginCover} alt="login" width={216} height={228} />
         </div>
 
       </div>

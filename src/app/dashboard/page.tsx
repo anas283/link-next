@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog"
 import { ILink, setLinkDetails, setTheme } from "@/lib/store/linkSlice";
 import { useToast } from "@/components/ui/use-toast"
+import { setUserDetails } from "@/lib/store/authSlice";
 
 export default function Dashboard() {
   const { register, setValue, getValues, control, handleSubmit, watch } = useForm();
@@ -61,7 +62,7 @@ export default function Dashboard() {
           .eq('email', user.email)
 
         if (data) {
-          downloadAvatar(data[0].avatar)
+          if (data[0].avatar) downloadAvatar(data[0].avatar);
           setUserData(data[0]);
           setValue('username', data[0].username);
           setValue('bio', data[0].bio);
@@ -69,6 +70,7 @@ export default function Dashboard() {
           dispatch(setLinkDetails(data[0]));
           getUserLinks(data[0].id)
           getAppearance(data[0].id)
+          dispatch(setUserDetails(data[0]));
         }
       }
     }
@@ -205,6 +207,7 @@ export default function Dashboard() {
     const { data, error } = await supabase
       .from('links')
       .select()
+      .eq('uid', userData?.id)
     return data;
   }
 
@@ -268,9 +271,18 @@ export default function Dashboard() {
     }
   }
 
+  const cancelAddLink = (index: number, link: any) => {
+    if (!link.mode) {
+      remove(index);
+    }
+    else {
+      toggleLinkMode(index, link.mode)
+    }
+  }
+
   return (
     <div className="p-4 bg-gray-50 h-full">
-      <div className="max-w-screen-xl mx-auto flex justify-between">
+      <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row md:justify-between">
         <div className="w-full md:w-1/2">
           <Card>
             <CardHeader>
@@ -317,12 +329,12 @@ export default function Dashboard() {
                   {fields.map((item, index) => (
                     <div key={item.id}>
                       {watch('links')[index].mode === 'view' ?
-                        <Card className="p-4 flex justify-between">
+                        <Card className="p-4 flex flex-col lg:flex-row lg:justify-between">
                           <div>
                             <h6 className="text-sm font-medium">{getValues('links')[index].title}</h6>
-                            <h6 className="text-sm text-gray-500">{getValues('links')[index].url}</h6>
+                            <h6 className="text-sm text-gray-500 truncate">{getValues('links')[index].url}</h6>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 mt-3 lg:mt-0">
                             <Button className="w-8 h-8 p-0" variant="outline"
                               onClick={() => toggleLinkMode(index, watch('links')[index].mode)}
                             >
@@ -373,7 +385,7 @@ export default function Dashboard() {
                             <div className="flex flex-row gap-2 justify-end">
                               <Button
                                 variant="outline"
-                                onClick={() => toggleLinkMode(index, watch('links')[index].mode)}
+                                onClick={() => cancelAddLink(index, watch('links')[index])}
                               >
                                 Cancel
                               </Button>
@@ -392,10 +404,10 @@ export default function Dashboard() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="mt-4 w-full"
+                  className="w-full mt-4"
                   onClick={() => append({ uid: userData?.id, title: '', url: '' })}
                 >
-                  <Plus className="w-4 h-4 mr-1" /> Add more link
+                  <Plus className="w-4 h-4 mr-1" /> Add link
                 </Button>
               </form>
             </CardContent>
