@@ -38,6 +38,14 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge"
 
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose
+} from "@/components/ui/sheet"
+import { Menu } from "lucide-react";
+
 export default function Navbar() {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href;
@@ -99,7 +107,7 @@ export default function Navbar() {
           }
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline">Share</Button>
+              <Button variant="outline" className="hidden lg:flex">Share</Button>
             </PopoverTrigger>
             <PopoverContent className="w-fit">
               <h6 className="font-semibold">Share your Linkwajo</h6>
@@ -167,12 +175,32 @@ export default function Navbar() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <button data-collapse-toggle="navbar-cta" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-cta" aria-expanded="false">
-            <span className="sr-only">Open main menu</span>
-            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15"/>
-            </svg>
-          </button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="flex lg:hidden px-0 bg-transparent border-none">
+                <Menu className="w-8 h-8" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <div className="flex flex-col gap-5 my-10">
+                <SheetClose asChild>
+                  <Link href="/dashboard" className={`text-lg block py-2 ${isActive('/dashboard') ? 'text-black':'text-gray-500'}`}>
+                    Links
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link href="/dashboard/appearance" className={`text-lg block py-2 ${isActive('/dashboard/appearance') ? 'text-black':'text-gray-500'}`}>
+                    Appearance
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link href="/dashboard/analytics" className={`text-lg block py-2 ${isActive('/dashboard/analytics') ? 'text-black':'text-gray-500'}`}>
+                    Analytics
+                  </Link>
+                </SheetClose>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>

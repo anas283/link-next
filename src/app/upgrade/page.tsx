@@ -22,11 +22,11 @@ export default function Upgrade() {
           </Link>
         </div>
 
-        <div>
+        <div className="mt-8 lg:mt-0">
           <h1 className="text-3xl md:text-5xl font-bold text-center max-w-3xl mx-auto">
             Choose the right plan for you
           </h1>
-          <h6 className="text-[15px] text-gray-600 font-normal text-center max-w-xl mx-auto mt-8">
+          <h6 className="text-[15px] text-gray-600 font-normal text-center max-w-xl mx-auto mt-4 lg:mt-8">
             You can change at anytime 
           </h6>
         </div>

@@ -157,7 +157,7 @@ export default function Register() {
     <div className="min-h-screen min-w-screen flex items-center">
       <div className="w-full max-w-4xl flex mx-auto flex-col lg:flex-row lg:justify-between px-8">
 
-        <div className="w-full lg:w-1/2 pr-10 flex items-center order-2 lg:order-1 mt-10 lg:mt-0">
+        <div className="w-full lg:w-1/2 lg:pr-10 flex items-center order-2 lg:order-1 mt-10 lg:mt-0">
           {isClaimed ?
             <form onSubmit={handleSubmit(onSubmit)}>
               <Button variant="ghost" onClick={() => setIsClaimed(!isClaimed)} className="p-0 hover:bg-transparent">

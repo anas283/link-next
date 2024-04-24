@@ -29,10 +29,10 @@ export default function Templates() {
 
   return (
     <div className="flex min-h-screen">
-      <div className="w-full max-w-6xl mx-auto py-20">
+      <div className="w-full max-w-6xl mx-auto px-4 lg:px-0 py-20">
 
         <div>
-          <h1 className="text-5xl font-bold text-center max-w-3xl mx-auto">
+          <h1 className="text-4xl lg:text-5xl font-bold text-center max-w-3xl mx-auto">
             Pricing plans for everyone
           </h1>
           <h6 className="text-[15px] text-gray-600 font-normal text-center max-w-xl mx-auto mt-8">
