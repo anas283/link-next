@@ -90,9 +90,8 @@ export default function Upgrade() {
                   </li>
                 </ul>
                 <Link 
-                  href="https://buy.stripe.com/test_cN25l33uhcKp63K8ww"
-                  // href="https://buy.stripe.com/9AQ03f2GkdIG1LW9AA" 
-                  // target="_blank"
+                  // href="https://buy.stripe.com/test_cN25l33uhcKp63K8ww"
+                  href="https://buy.stripe.com/9AQ03f2GkdIG1LW9AA" 
                 > 
                   <Button className="mt-auto bg-blue-500 w-full"
                     onClick={() => choosePlan("Pro")}

@@ -23,8 +23,7 @@ export default function SuccessPayment() {
   },[])
 
   const checkPaymentStatus = async (checkoutSessionId: string) => {
-    // TODO: change to live key
-    const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_TEST_KEY!)
+    const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_LIVE_KEY!)
     const session = await stripe.checkout.sessions.retrieve(
       checkoutSessionId
     );

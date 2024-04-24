@@ -159,7 +159,7 @@ export default function Analytics() {
   )
 }
 
-export function UpgradeToView(userDetails: UserDetails) {
+function UpgradeToView(userDetails: UserDetails) {
   return (
     <>
       {userDetails.tier === 'FREE' &&
