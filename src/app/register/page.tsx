@@ -144,7 +144,7 @@ export default function Register() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'http://localhost:3000/register',
+        redirectTo: 'https://www.linkwajo.com/register',
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
